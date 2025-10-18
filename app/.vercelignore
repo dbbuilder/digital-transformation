@@ -1,0 +1,9 @@
+node_modules
+.env
+.env.local
+*.secrets.json
+app.secrets.json
+.git
+.github
+backups
+*.log
