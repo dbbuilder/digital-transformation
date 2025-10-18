@@ -1,0 +1,11 @@
+Phase,Track,Tier,Question,Notes / Evidence,Priority (H/M/L),AI Readiness / Applicability
+Intelligence,Business,UI,Personalization/recommendations impact on outcomes?,,,Human override/transparency thresholds?
+Intelligence,Business,Mid-Tier/API,Intelligent routing/prioritization benefits?,,,Policy constraints for automated actions?
+Intelligence,Business,Data,Predictive/optimization models with advantage?,,,Acceptance of probabilistic results?
+Intelligence,Business,Cloud,FinOps policies to optimize cost/txn?,,,Automated policy tuning constraints?
+Intelligence,Business,AI/External,Executive audit for AI at scale?,,,Reporting cadence and metrics?
+Intelligence,Technical,UI,Conversational UX; edge prompt patterns/guardrails.,,,PII boundary and retention verified?
+Intelligence,Technical,Mid-Tier/API,Event orchestration & agents with approvals.,,,Safety policies and rate limits configured?
+Intelligence,Technical,Data,Feature store; auto-profiling; drift detection.,,,Retraining cadence and contracts enforced?
+Intelligence,Technical,Cloud,Predictive autoscaling; chaos tests; failover drills.,,,Anomaly explanations recorded?
+Intelligence,Technical,AI/External,"Automate evals, red-team, telemetry, retraining.",,,Human-in-the-loop checkpoints live?

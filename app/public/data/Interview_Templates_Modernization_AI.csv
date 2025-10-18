@@ -1,0 +1,11 @@
+Phase,Track,Tier,Question,Notes / Evidence,Priority (H/M/L),AI Readiness / Applicability
+Modernization,Business,UI,Which flows migrate first; how to measure adoption?,,,AI concierge value vs risk?
+Modernization,Business,Mid-Tier/API,Partner integrations/ecosystems to enable?,,,AI-based prioritization or routing?
+Modernization,Business,Data,KPIs for freshness/accuracy value?,,,Predictive KPI targets?
+Modernization,Business,Cloud,Scaling scenarios to test (seasonal/campaigns)?,,,Predictive scaling targets?
+Modernization,Business,AI/External,Where to expand copilots/RAG?,,,Governance ready?
+Modernization,Technical,UI,Migrate to component library; add telemetry/flags.,,,Personalization experiment plan?
+Modernization,Technical,Mid-Tier/API,"Gateway SLOs, back-pressure, retries.",,,Semantic router to AI services?
+Modernization,Technical,Data,"CDC/dbt/ADF jobs, tests, semantic models.",,,Feature store/drift detection live?
+Modernization,Technical,Cloud,"IaC deploys, autoscale tests, blue/green, canary.",,,Predictive scaling baseline learned?
+Modernization,Technical,AI/External,Deploy RAG/ML Ops; enforce guardrails + HIL.,,,Eval metrics passing? Rollback path verified?

@@ -1,0 +1,105 @@
+name: Deploy Supabase Schema
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/schema.sql'
+      - '.github/workflows/deploy-schema.yml'
+
+  workflow_dispatch: # Allow manual trigger
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Supabase CLI
+        run: |
+          npm install -g supabase@latest
+          supabase --version
+
+      - name: Verify schema file exists
+        run: |
+          if [ ! -f supabase/schema.sql ]; then
+            echo "❌ Error: supabase/schema.sql not found"
+            exit 1
+          fi
+          echo "✅ Schema file found ($(wc -l < supabase/schema.sql) lines)"
+
+      - name: Link to Supabase project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          supabase link --project-ref $SUPABASE_PROJECT_ID
+
+      - name: Deploy schema via psql
+        env:
+          PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          # Install PostgreSQL client
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+          # Deploy schema
+          psql "postgresql://postgres@db.$SUPABASE_PROJECT_ID.supabase.co:5432/postgres?sslmode=require" \
+            -f supabase/schema.sql \
+            -v ON_ERROR_STOP=1 \
+            --echo-errors
+
+          echo "✅ Schema deployed successfully"
+
+      - name: Verify deployment
+        env:
+          PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          # Count tables
+          TABLE_COUNT=$(psql "postgresql://postgres@db.$SUPABASE_PROJECT_ID.supabase.co:5432/postgres?sslmode=require" \
+            -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';")
+
+          echo "📊 Tables in database: $TABLE_COUNT"
+
+          if [ "$TABLE_COUNT" -lt 10 ]; then
+            echo "❌ Expected at least 10 tables, found $TABLE_COUNT"
+            exit 1
+          fi
+
+          echo "✅ Deployment verified"
+
+      - name: Create deployment tag
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          TAG="schema-deploy-$(date +%Y%m%d-%H%M%S)"
+          git tag -a "$TAG" -m "Schema deployment from CI/CD"
+          git push origin "$TAG" || true
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Schema deployment failed!"
+          echo "Check the logs above for details"

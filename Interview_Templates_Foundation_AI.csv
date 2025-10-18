@@ -1,0 +1,11 @@
+Phase,Track,Tier,Question,Notes / Evidence,Priority (H/M/L),AI Readiness / Applicability
+Foundation,Business,UI,Adoptable design system/language across products?,,,Telemetry/consent patterns for AI?
+Foundation,Business,Mid-Tier/API,Agreed SLAs and partner dependencies?,,,Tolerance for AI fallbacks/HIL?
+Foundation,Business,Data,First domains for contracts/lineage onboard?,,,Roadmap for AI-enabling datasets?
+Foundation,Business,Cloud,Budget guardrails and tagging standards?,,,FinOps ML targets?
+Foundation,Business,AI/External,Governance for prompts/models/audits?,,,Eval cadence & acceptance thresholds?
+Foundation,Technical,UI,"Component library scaffolding (tokens, theming, A11y)?",,,Event/log hooks for AI signals?
+Foundation,Technical,Mid-Tier/API,"Gateway, auth, caching, idempotency, error contracts?",,,Event bus + tracing for AI orchestration?
+Foundation,Technical,Data,"Contracts, CDC, dbt/ADF, lineage (Purview)?",,,Vector store/embeddings/feature store skeleton?
+Foundation,Technical,Cloud,ALZ/IaC/policy-as-code/secrets mgmt?,,,Predictive scaling & anomaly hooks?
+Foundation,Technical,AI/External,"Eval harness, guardrails, key rotation, audit logging?",,,Red-teaming & rollback procedures?

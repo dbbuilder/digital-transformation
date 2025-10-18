@@ -1,0 +1,11 @@
+Phase,Track,Tier,Question,Notes / Evidence,Priority (H/M/L),AI Readiness / Applicability
+Discovery & Alignment,Business,UI,Top 3 journeys to improve; outcomes and success metrics?,,,AI assist potential? Privacy concerns?
+Discovery & Alignment,Business,Mid-Tier/API,Which capabilities are blocked by current APIs or SLAs?,,,AI orchestration value?
+Discovery & Alignment,Business,Data,Which decisions need better freshness/accuracy? Define SLAs.,,,Data labeled/contracted for AI?
+Discovery & Alignment,Business,Cloud,Cost pressures or regional constraints?,,,Predictive scaling value?
+Discovery & Alignment,Business,AI/External,90‑day safe AI wins?,,,Low-risk copilots/RAG?
+Discovery & Alignment,Technical,UI,Stacks in use and telemetry?,,,Signals for personalization later?
+Discovery & Alignment,Technical,Mid-Tier/API,Where are direct DB calls? What auth is enforced?,,,Event hooks for AI routing?
+Discovery & Alignment,Technical,Data,Inventory systems/schemas/pipelines/quality checks.,,,Embeddings feasibility? Feature candidates?
+Discovery & Alignment,Technical,Cloud,Provisioning (IaC/manual)? Policies?,,,Anomaly detection hooks?
+Discovery & Alignment,Technical,AI/External,Existing pilots? PHI/PII/FERPA constraints?,,,Guardrails/evaluation harness needs?

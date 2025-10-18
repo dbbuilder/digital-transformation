@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme {
+  /* Primary color palette - Pastel Lilac */
+  --color-primary-50: #faf8fc;
+  --color-primary-100: #f3f0f8;
+  --color-primary-200: #e8e1f1;
+  --color-primary-300: #d6c9e5;
+  --color-primary-400: #bfa8d4;
+  --color-primary-500: #a687c0;
+  --color-primary-600: #8b6aa8;
+  --color-primary-700: #73578b;
+  --color-primary-800: #604a73;
+  --color-primary-900: #51405f;
+  --color-primary-950: #33263d;
+}
+
+@layer base {
+  /* Professional minimal styling */
+  body {
+    @apply antialiased bg-white text-neutral-900;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl;
+  }
+
+  h2 {
+    @apply text-3xl;
+  }
+
+  h3 {
+    @apply text-2xl;
+  }
+}
+
+@layer components {
+  /* Reusable component styles */
+  .btn-primary {
+    @apply px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-white text-neutral-900 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors duration-200 font-medium;
+  }
+
+  .card {
+    @apply bg-white border border-neutral-200 rounded-xl shadow-sm p-6;
+  }
+
+  .input {
+    @apply px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all;
+  }
+}
