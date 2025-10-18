@@ -457,30 +457,37 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Apply to all syncable tables
+DROP TRIGGER IF EXISTS projects_version_trigger ON digiform.projects;
 CREATE TRIGGER projects_version_trigger
   BEFORE UPDATE ON digiform.projects
   FOR EACH ROW EXECUTE FUNCTION digiform.increment_version();
 
+DROP TRIGGER IF EXISTS teams_version_trigger ON digiform.teams;
 CREATE TRIGGER teams_version_trigger
   BEFORE UPDATE ON digiform.teams
   FOR EACH ROW EXECUTE FUNCTION digiform.increment_version();
 
+DROP TRIGGER IF EXISTS stakeholders_version_trigger ON digiform.stakeholders;
 CREATE TRIGGER stakeholders_version_trigger
   BEFORE UPDATE ON digiform.stakeholders
   FOR EACH ROW EXECUTE FUNCTION digiform.increment_version();
 
+DROP TRIGGER IF EXISTS assessments_version_trigger ON digiform.assessments;
 CREATE TRIGGER assessments_version_trigger
   BEFORE UPDATE ON digiform.assessments
   FOR EACH ROW EXECUTE FUNCTION digiform.increment_version();
 
+DROP TRIGGER IF EXISTS responses_version_trigger ON digiform.assessment_responses;
 CREATE TRIGGER responses_version_trigger
   BEFORE UPDATE ON digiform.assessment_responses
   FOR EACH ROW EXECUTE FUNCTION digiform.increment_version();
 
+DROP TRIGGER IF EXISTS approvals_version_trigger ON digiform.sow_section_approvals;
 CREATE TRIGGER approvals_version_trigger
   BEFORE UPDATE ON digiform.sow_section_approvals
   FOR EACH ROW EXECUTE FUNCTION digiform.increment_version();
 
+DROP TRIGGER IF EXISTS workflows_version_trigger ON digiform.sow_approval_workflows;
 CREATE TRIGGER workflows_version_trigger
   BEFORE UPDATE ON digiform.sow_approval_workflows
   FOR EACH ROW EXECUTE FUNCTION digiform.increment_version();
@@ -502,6 +509,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION handle_new_user();
