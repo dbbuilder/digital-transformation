@@ -2,20 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { db } from '../../lib/database'
-import type { FourCornerData, Tier } from '../../types'
+import type { FourCornerData, Tier, FourCornerQuadrant } from '../../types'
 
 interface FourCornerDiagramProps {
   projectId: number
 }
 
-type Quadrant = 'current_ui' | 'future_ui' | 'current_data' | 'future_data'
-
-interface QuadrantContent {
-  quadrant: Quadrant
-  tier: Tier
-  content: string
-  notes?: string
-}
+type Quadrant = FourCornerQuadrant
 
 export function FourCornerDiagram({ projectId }: FourCornerDiagramProps) {
   const [selectedQuadrant, setSelectedQuadrant] = useState<Quadrant | null>(null)
@@ -42,7 +35,7 @@ export function FourCornerDiagram({ projectId }: FourCornerDiagramProps) {
     }
   }
 
-  async function saveQuadrantContent(quadrant: Quadrant, tier: Tier, content: string, notes?: string) {
+  async function saveQuadrantContent(quadrant: Quadrant, tier: Tier, description: string, notes?: string) {
     try {
       // Check if entry exists
       const existing = data.find((d) => d.quadrant === quadrant && d.tier === tier)
@@ -50,8 +43,10 @@ export function FourCornerDiagram({ projectId }: FourCornerDiagramProps) {
       if (existing && existing.id) {
         // Update existing
         await db.fourCornerData.update(existing.id, {
-          content,
-          notes,
+          content: {
+            ...existing.content,
+            description,
+          },
           updatedAt: new Date(),
         })
       } else {
@@ -60,8 +55,9 @@ export function FourCornerDiagram({ projectId }: FourCornerDiagramProps) {
           projectId,
           quadrant,
           tier,
-          content,
-          notes,
+          content: {
+            description,
+          },
           version: 1,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -81,27 +77,27 @@ export function FourCornerDiagram({ projectId }: FourCornerDiagramProps) {
   }
 
   function getQuadrantColor(quadrant: Quadrant): string {
-    const colors: Record<Quadrant, string> = {
-      current_ui: 'bg-blue-50 border-blue-200',
-      future_ui: 'bg-green-50 border-green-200',
-      current_data: 'bg-orange-50 border-orange-200',
-      future_data: 'bg-purple-50 border-purple-200',
+    const colors: Record<FourCornerQuadrant, string> = {
+      CURRENT_UI: 'bg-blue-50 border-blue-200',
+      FUTURE_UI: 'bg-green-50 border-green-200',
+      CURRENT_DATA: 'bg-orange-50 border-orange-200',
+      FUTURE_DATA: 'bg-purple-50 border-purple-200',
     }
     return colors[quadrant]
   }
 
   function getQuadrantTitle(quadrant: Quadrant): string {
-    const titles: Record<Quadrant, string> = {
-      current_ui: 'Current State - UI/UX',
-      future_ui: 'Future State - UI/UX',
-      current_data: 'Current State - Data Platform',
-      future_data: 'Future State - Data Platform',
+    const titles: Record<FourCornerQuadrant, string> = {
+      CURRENT_UI: 'Current State - UI/UX',
+      FUTURE_UI: 'Future State - UI/UX',
+      CURRENT_DATA: 'Current State - Data Platform',
+      FUTURE_DATA: 'Future State - Data Platform',
     }
     return titles[quadrant]
   }
 
   function getQuadrantIcon(quadrant: Quadrant) {
-    if (quadrant.includes('ui')) {
+    if (quadrant.includes('UI')) {
       return (
         <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -127,7 +123,7 @@ export function FourCornerDiagram({ projectId }: FourCornerDiagramProps) {
 
   function QuadrantCard({ quadrant }: { quadrant: Quadrant }) {
     const tierData = getQuadrantData(quadrant, selectedTier)
-    const hasContent = tierData && tierData.content.trim().length > 0
+    const hasContent = tierData && (tierData.content.description?.trim().length ?? 0) > 0
 
     return (
       <div
@@ -146,10 +142,10 @@ export function FourCornerDiagram({ projectId }: FourCornerDiagramProps) {
         <div className="min-h-[200px]">
           {hasContent ? (
             <div className="space-y-2">
-              <p className="text-sm text-neutral-700 whitespace-pre-wrap">{tierData.content}</p>
-              {tierData.notes && (
+              <p className="text-sm text-neutral-700 whitespace-pre-wrap">{tierData?.content.description}</p>
+              {tierData?.content.title && (
                 <div className="rounded bg-white bg-opacity-50 p-2 text-xs text-neutral-600">
-                  <strong>Notes:</strong> {tierData.notes}
+                  <strong>Title:</strong> {tierData.content.title}
                 </div>
               )}
             </div>
@@ -227,7 +223,7 @@ export function FourCornerDiagram({ projectId }: FourCornerDiagramProps) {
         <div className="flex flex-wrap gap-2">
           {tiers.map((tier) => {
             const tierDataCount = data.filter(
-              (d) => d.tier === tier && d.content.trim().length > 0
+              (d) => d.tier === tier && (d.content.description?.trim().length ?? 0) > 0
             ).length
             const completionPercentage = Math.round((tierDataCount / 4) * 100)
 
@@ -256,12 +252,12 @@ export function FourCornerDiagram({ projectId }: FourCornerDiagramProps) {
       {/* Four-Corner Grid */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Top Row */}
-        <QuadrantCard quadrant="future_ui" />
-        <QuadrantCard quadrant="current_ui" />
+        <QuadrantCard quadrant="FUTURE_UI" />
+        <QuadrantCard quadrant="CURRENT_UI" />
 
         {/* Bottom Row */}
-        <QuadrantCard quadrant="future_data" />
-        <QuadrantCard quadrant="current_data" />
+        <QuadrantCard quadrant="FUTURE_DATA" />
+        <QuadrantCard quadrant="CURRENT_DATA" />
       </div>
 
       {/* Edit Modal */}
@@ -315,15 +311,15 @@ interface EditQuadrantModalProps {
 }
 
 function EditQuadrantModal({ quadrant, tier, data, onSave, onClose }: EditQuadrantModalProps) {
-  const [content, setContent] = useState(data?.content || '')
-  const [notes, setNotes] = useState(data?.notes || '')
+  const [content, setContent] = useState(data?.content.description || '')
+  const [notes, setNotes] = useState(data?.content.title || '')
 
   function getQuadrantTitle(quadrant: Quadrant): string {
-    const titles: Record<Quadrant, string> = {
-      current_ui: 'Current State - UI/UX',
-      future_ui: 'Future State - UI/UX',
-      current_data: 'Current State - Data Platform',
-      future_data: 'Future State - Data Platform',
+    const titles: Record<FourCornerQuadrant, string> = {
+      CURRENT_UI: 'Current State - UI/UX',
+      FUTURE_UI: 'Future State - UI/UX',
+      CURRENT_DATA: 'Current State - Data Platform',
+      FUTURE_DATA: 'Future State - Data Platform',
     }
     return titles[quadrant]
   }

@@ -138,6 +138,9 @@ export interface AssessmentResponse {
   approvalStatus?: ApprovalStatus
 }
 
+// Alias for backward compatibility
+export type InterviewResponse = AssessmentResponse
+
 export interface InterviewQuestion {
   id: string
   phase: Phase

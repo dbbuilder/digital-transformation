@@ -685,7 +685,7 @@ function addFourCornerDiagram(
     const content = fourCornerData.filter((d) => d.quadrant === quadrant.name)
     if (content.length > 0) {
       const summary = content
-        .map((c) => `${c.tier}: ${c.content.substring(0, 60)}...`)
+        .map((c) => `${c.tier}: ${(c.content.description || '').substring(0, 60)}...`)
         .slice(0, 3)
         .join('\n')
 

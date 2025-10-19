@@ -60,7 +60,7 @@ async function generatePDFSOW(
 
   doc.setFontSize(10)
   doc.text(`Generated: ${new Date().toLocaleDateString()}`, 105, yPosition, { align: 'center' })
-  doc.text(`Path: ${assessment.transformationPath}`, 105, yPosition + 5, { align: 'center' })
+  doc.text(`Path: ${project.transformationPath}`, 105, yPosition + 5, { align: 'center' })
   doc.text(`Phase: ${assessment.phase}`, 105, yPosition + 10, { align: 'center' })
 
   // Add new page for content
@@ -193,7 +193,7 @@ async function generatePowerPointSOW(
 
   // Set presentation properties
   pptx.author = 'Digital Transformation System'
-  pptx.company = project.organizationName || 'Organization'
+  pptx.company = (project.metadata?.organizationName as string) || 'Organization'
   pptx.title = `Statement of Work - ${project.name}`
 
   // Title slide
@@ -222,7 +222,7 @@ async function generatePowerPointSOW(
   })
 
   titleSlide.addText([
-    { text: `Path: ${assessment.transformationPath}`, options: { breakLine: true } },
+    { text: `Path: ${project.transformationPath}`, options: { breakLine: true } },
     { text: `Phase: ${assessment.phase}`, options: { breakLine: true } },
     { text: `Generated: ${new Date().toLocaleDateString()}`, options: {} },
   ], {
@@ -387,7 +387,7 @@ function generateMarkdownSOW(
 ): SOWDocument {
   let markdown = `# Statement of Work\n\n`
   markdown += `## ${project.name}\n\n`
-  markdown += `**Transformation Path:** ${assessment.transformationPath}\n\n`
+  markdown += `**Transformation Path:** ${project.transformationPath}\n\n`
   markdown += `**Phase:** ${assessment.phase}\n\n`
   markdown += `**Generated:** ${new Date().toLocaleDateString()}\n\n`
   markdown += `---\n\n`
@@ -431,14 +431,14 @@ function generateMarkdownSOW(
 /**
  * Download generated SOW document
  */
-export function downloadSOWDocument(document: SOWDocument): void {
-  const url = URL.createObjectURL(document.blob)
-  const link = document.createElement('a')
+export function downloadSOWDocument(sowDocument: SOWDocument): void {
+  const url = URL.createObjectURL(sowDocument.blob)
+  const link = window.document.createElement('a')
   link.href = url
-  link.download = document.filename
-  document.body.appendChild(link)
+  link.download = sowDocument.filename
+  window.document.body.appendChild(link)
   link.click()
-  document.body.removeChild(link)
+  window.document.body.removeChild(link)
   URL.revokeObjectURL(url)
 }
 

@@ -70,9 +70,9 @@ export async function generateSOWPreview(
 
 function generateExecutiveSummary(responses: InterviewResponse[]): SOWSection {
   const relevantResponses = responses.filter(r =>
-    r.question.toLowerCase().includes('journey') ||
-    r.question.toLowerCase().includes('pain point') ||
-    r.question.toLowerCase().includes('objective')
+    r.questionText.toLowerCase().includes('journey') ||
+    r.questionText.toLowerCase().includes('pain point') ||
+    r.questionText.toLowerCase().includes('objective')
   )
 
   if (relevantResponses.length === 0) {
@@ -90,9 +90,9 @@ function generateExecutiveSummary(responses: InterviewResponse[]): SOWSection {
     }
   }
 
-  const journeys = relevantResponses.filter(r => r.question.toLowerCase().includes('journey'))
-  const painPoints = relevantResponses.filter(r => r.question.toLowerCase().includes('pain'))
-  const objectives = relevantResponses.filter(r => r.question.toLowerCase().includes('objective'))
+  const journeys = relevantResponses.filter(r => r.questionText.toLowerCase().includes('journey'))
+  const painPoints = relevantResponses.filter(r => r.questionText.toLowerCase().includes('pain'))
+  const objectives = relevantResponses.filter(r => r.questionText.toLowerCase().includes('objective'))
 
   let content = ''
   let quality: 'excellent' | 'good' | 'needs-work' = 'needs-work'
@@ -100,29 +100,29 @@ function generateExecutiveSummary(responses: InterviewResponse[]): SOWSection {
 
   // Build executive summary content
   if (journeys.length > 0) {
-    const journeyText = journeys.map(r => r.response).join(' ')
+    const journeyText = journeys.map(r => r.answer).join(' ')
     content += `**Critical User Journeys**: ${extractKeyPoints(journeyText)}\n\n`
   } else {
     suggestions.push('Add information about critical user journeys')
   }
 
   if (painPoints.length > 0) {
-    const painText = painPoints.map(r => r.response).join(' ')
+    const painText = painPoints.map(r => r.answer).join(' ')
     content += `**Current Challenges**: ${extractKeyPoints(painText)}\n\n`
   } else {
     suggestions.push('Document current pain points and challenges')
   }
 
   if (objectives.length > 0) {
-    const objectiveText = objectives.map(r => r.response).join(' ')
+    const objectiveText = objectives.map(r => r.answer).join(' ')
     content += `**Transformation Objectives**: ${extractKeyPoints(objectiveText)}\n\n`
   } else {
     suggestions.push('Define clear transformation objectives')
   }
 
   // Assess quality
-  const hasMetrics = relevantResponses.some(r => /\d+%|\$\d+|time|users|clicks/.test(r.response))
-  const hasSpecifics = relevantResponses.some(r => r.response.length > 100)
+  const hasMetrics = relevantResponses.some(r => /\d+%|\$\d+|time|users|clicks/.test(r.answer))
+  const hasSpecifics = relevantResponses.some(r => r.answer.length > 100)
 
   if (hasMetrics && hasSpecifics && suggestions.length === 0) {
     quality = 'excellent'
@@ -137,17 +137,17 @@ function generateExecutiveSummary(responses: InterviewResponse[]): SOWSection {
     title: 'Executive Summary',
     content: content || '[Add more detail to generate executive summary]',
     quality,
-    sourceResponses: relevantResponses.map(r => r.id),
+    sourceResponses: relevantResponses.map(r => r.id).filter((id): id is number => id !== undefined),
     improvementSuggestions: suggestions,
   }
 }
 
 function generateCurrentStateAssessment(responses: InterviewResponse[]): SOWSection {
   const relevantResponses = responses.filter(r =>
-    r.question.toLowerCase().includes('current') ||
-    r.question.toLowerCase().includes('existing') ||
-    r.question.toLowerCase().includes('technology') ||
-    r.question.toLowerCase().includes('architecture')
+    r.questionText.toLowerCase().includes('current') ||
+    r.questionText.toLowerCase().includes('existing') ||
+    r.questionText.toLowerCase().includes('technology') ||
+    r.questionText.toLowerCase().includes('architecture')
   )
 
   if (relevantResponses.length === 0) {
@@ -170,15 +170,15 @@ function generateCurrentStateAssessment(responses: InterviewResponse[]): SOWSect
 
   // Technology stack
   const techResponses = relevantResponses.filter(r =>
-    r.question.toLowerCase().includes('technology') ||
-    r.question.toLowerCase().includes('stack') ||
-    r.question.toLowerCase().includes('tool')
+    r.questionText.toLowerCase().includes('technology') ||
+    r.questionText.toLowerCase().includes('stack') ||
+    r.questionText.toLowerCase().includes('tool')
   )
 
   if (techResponses.length > 0) {
     content += '### Technology Stack\n\n'
     techResponses.forEach(r => {
-      content += `- **${extractTopic(r.question)}**: ${r.response}\n`
+      content += `- **${extractTopic(r.questionText)}**: ${r.answer}\n`
     })
     content += '\n'
   } else {
@@ -187,21 +187,21 @@ function generateCurrentStateAssessment(responses: InterviewResponse[]): SOWSect
 
   // Architecture
   const archResponses = relevantResponses.filter(r =>
-    r.question.toLowerCase().includes('architecture') ||
-    r.question.toLowerCase().includes('integration')
+    r.questionText.toLowerCase().includes('architecture') ||
+    r.questionText.toLowerCase().includes('integration')
   )
 
   if (archResponses.length > 0) {
     content += '### Architecture & Integrations\n\n'
     archResponses.forEach(r => {
-      content += `- **${extractTopic(r.question)}**: ${r.response}\n`
+      content += `- **${extractTopic(r.questionText)}**: ${r.answer}\n`
     })
     content += '\n'
   }
 
   // Quality assessment
-  const hasTechVersions = relevantResponses.some(r => /v?\d+\.\d+|version \d+/i.test(r.response))
-  const hasArchDetails = relevantResponses.some(r => r.response.length > 80)
+  const hasTechVersions = relevantResponses.some(r => /v?\d+\.\d+|version \d+/i.test(r.answer))
+  const hasArchDetails = relevantResponses.some(r => r.answer.length > 80)
 
   let quality: 'excellent' | 'good' | 'needs-work' = 'needs-work'
   if (hasTechVersions && hasArchDetails) {
@@ -217,17 +217,17 @@ function generateCurrentStateAssessment(responses: InterviewResponse[]): SOWSect
     title: 'Current State Assessment',
     content,
     quality,
-    sourceResponses: relevantResponses.map(r => r.id),
+    sourceResponses: relevantResponses.map(r => r.id).filter((id): id is number => id !== undefined),
     improvementSuggestions: suggestions,
   }
 }
 
 function generateBusinessDrivers(responses: InterviewResponse[]): SOWSection {
   const relevantResponses = responses.filter(r =>
-    r.question.toLowerCase().includes('business') ||
-    r.question.toLowerCase().includes('impact') ||
-    r.question.toLowerCase().includes('cost') ||
-    r.question.toLowerCase().includes('revenue')
+    r.questionText.toLowerCase().includes('business') ||
+    r.questionText.toLowerCase().includes('impact') ||
+    r.questionText.toLowerCase().includes('cost') ||
+    r.questionText.toLowerCase().includes('revenue')
   )
 
   if (relevantResponses.length === 0) {
@@ -245,11 +245,11 @@ function generateBusinessDrivers(responses: InterviewResponse[]): SOWSection {
   const suggestions: string[] = []
 
   relevantResponses.forEach(r => {
-    content += `- **${extractTopic(r.question)}**: ${r.response}\n`
+    content += `- **${extractTopic(r.questionText)}**: ${r.answer}\n`
   })
 
-  const hasFinancials = relevantResponses.some(r => /\$\d+|revenue|cost|savings/i.test(r.response))
-  const hasMetrics = relevantResponses.some(r => /\d+%|time|efficiency/i.test(r.response))
+  const hasFinancials = relevantResponses.some(r => /\$\d+|revenue|cost|savings/i.test(r.answer))
+  const hasMetrics = relevantResponses.some(r => /\d+%|time|efficiency/i.test(r.answer))
 
   let quality: 'excellent' | 'good' | 'needs-work' = 'needs-work'
   if (hasFinancials && hasMetrics) {
@@ -267,17 +267,17 @@ function generateBusinessDrivers(responses: InterviewResponse[]): SOWSection {
     title: 'Business Drivers',
     content,
     quality,
-    sourceResponses: relevantResponses.map(r => r.id),
+    sourceResponses: relevantResponses.map(r => r.id).filter((id): id is number => id !== undefined),
     improvementSuggestions: suggestions,
   }
 }
 
 function generateProposedSolution(responses: InterviewResponse[]): SOWSection {
   const relevantResponses = responses.filter(r =>
-    r.question.toLowerCase().includes('future') ||
-    r.question.toLowerCase().includes('target') ||
-    r.question.toLowerCase().includes('solution') ||
-    r.question.toLowerCase().includes('modern')
+    r.questionText.toLowerCase().includes('future') ||
+    r.questionText.toLowerCase().includes('target') ||
+    r.questionText.toLowerCase().includes('solution') ||
+    r.questionText.toLowerCase().includes('modern')
   )
 
   if (relevantResponses.length === 0) {
@@ -295,11 +295,11 @@ function generateProposedSolution(responses: InterviewResponse[]): SOWSection {
   const suggestions: string[] = []
 
   relevantResponses.forEach(r => {
-    content += `- **${extractTopic(r.question)}**: ${r.response}\n`
+    content += `- **${extractTopic(r.questionText)}**: ${r.answer}\n`
   })
 
-  const hasTechSpecs = relevantResponses.some(r => /react|angular|vue|api|cloud|aws|azure/i.test(r.response))
-  const hasDetails = relevantResponses.every(r => r.response.length > 50)
+  const hasTechSpecs = relevantResponses.some(r => /react|angular|vue|api|cloud|aws|azure/i.test(r.answer))
+  const hasDetails = relevantResponses.every(r => r.answer.length > 50)
 
   let quality: 'excellent' | 'good' | 'needs-work' = 'needs-work'
   if (hasTechSpecs && hasDetails) {
@@ -315,16 +315,16 @@ function generateProposedSolution(responses: InterviewResponse[]): SOWSection {
     title: 'Proposed Solution',
     content,
     quality,
-    sourceResponses: relevantResponses.map(r => r.id),
+    sourceResponses: relevantResponses.map(r => r.id).filter((id): id is number => id !== undefined),
     improvementSuggestions: suggestions,
   }
 }
 
 function generateScopeAndDeliverables(responses: InterviewResponse[]): SOWSection {
   const relevantResponses = responses.filter(r =>
-    r.question.toLowerCase().includes('deliverable') ||
-    r.question.toLowerCase().includes('scope') ||
-    r.question.toLowerCase().includes('phase')
+    r.questionText.toLowerCase().includes('deliverable') ||
+    r.questionText.toLowerCase().includes('scope') ||
+    r.questionText.toLowerCase().includes('phase')
   )
 
   const content = `## Scope and Deliverables
@@ -336,7 +336,7 @@ Based on the ${responses.length} assessment responses, the transformation will i
 - API layer development and integration
 - Data platform migration and optimization
 - Cloud infrastructure setup and configuration
-${relevantResponses.length > 0 ? relevantResponses.map(r => `- ${r.response}`).join('\n') : ''}
+${relevantResponses.length > 0 ? relevantResponses.map(r => `- ${r.answer}`).join('\n') : ''}
 
 ### Out of Scope
 - [To be defined based on interview responses]
@@ -358,17 +358,17 @@ ${relevantResponses.length > 0 ? relevantResponses.map(r => `- ${r.response}`).j
     title: 'Scope and Deliverables',
     content,
     quality,
-    sourceResponses: relevantResponses.map(r => r.id),
+    sourceResponses: relevantResponses.map(r => r.id).filter((id): id is number => id !== undefined),
     improvementSuggestions: suggestions,
   }
 }
 
 function generateSuccessCriteria(responses: InterviewResponse[]): SOWSection {
   const relevantResponses = responses.filter(r =>
-    r.question.toLowerCase().includes('success') ||
-    r.question.toLowerCase().includes('criteria') ||
-    r.question.toLowerCase().includes('measure') ||
-    r.question.toLowerCase().includes('kpi')
+    r.questionText.toLowerCase().includes('success') ||
+    r.questionText.toLowerCase().includes('criteria') ||
+    r.questionText.toLowerCase().includes('measure') ||
+    r.questionText.toLowerCase().includes('kpi')
   )
 
   if (relevantResponses.length === 0) {
@@ -387,11 +387,11 @@ function generateSuccessCriteria(responses: InterviewResponse[]): SOWSection {
 
   content += 'The transformation will be considered successful when:\n\n'
   relevantResponses.forEach((r, idx) => {
-    content += `${idx + 1}. ${r.response}\n`
+    content += `${idx + 1}. ${r.answer}\n`
   })
 
-  const hasMetrics = relevantResponses.some(r => /\d+%|time|<|>|reduce|increase/i.test(r.response))
-  const hasMeasurement = relevantResponses.some(r => /measure|track|analytics|monitor/i.test(r.response))
+  const hasMetrics = relevantResponses.some(r => /\d+%|time|<|>|reduce|increase/i.test(r.answer))
+  const hasMeasurement = relevantResponses.some(r => /measure|track|analytics|monitor/i.test(r.answer))
 
   let quality: 'excellent' | 'good' | 'needs-work' = 'needs-work'
   if (hasMetrics && hasMeasurement) {
@@ -407,7 +407,7 @@ function generateSuccessCriteria(responses: InterviewResponse[]): SOWSection {
     title: 'Success Criteria',
     content,
     quality,
-    sourceResponses: relevantResponses.map(r => r.id),
+    sourceResponses: relevantResponses.map(r => r.id).filter((id): id is number => id !== undefined),
     improvementSuggestions: suggestions,
   }
 }

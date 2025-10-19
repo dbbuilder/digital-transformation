@@ -393,8 +393,8 @@ function SOWSectionCard({ section, isExpanded, onToggle, responses }: SOWSection
               <div className="space-y-2">
                 {sourceResponses.map(response => (
                   <div key={response.id} className="text-xs bg-neutral-50 p-2 rounded border border-neutral-200">
-                    <div className="font-medium text-neutral-700 mb-1">Q: {response.question}</div>
-                    <div className="text-neutral-600">A: {response.response.substring(0, 150)}{response.response.length > 150 ? '...' : ''}</div>
+                    <div className="font-medium text-neutral-700 mb-1">Q: {response.questionText}</div>
+                    <div className="text-neutral-600">A: {response.answer.substring(0, 150)}{response.answer.length > 150 ? '...' : ''}</div>
                   </div>
                 ))}
               </div>
