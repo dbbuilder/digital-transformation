@@ -282,6 +282,144 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
         </div>
       </section>
 
+      {/* Four-Corner Methodology - Detailed Explanation */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary-50 via-white to-neutral-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
+              The Four-Corner Framework
+            </h2>
+            <p className="text-base sm:text-lg text-neutral-600 max-w-3xl mx-auto">
+              Visualize transformation across two critical dimensions: User Experience (UI/Functionality) and Technology Platform (Data/Infrastructure/AI)
+            </p>
+          </div>
+
+          {/* Four-Corner Diagram Visual */}
+          <div className="max-w-5xl mx-auto mb-12 sm:mb-16">
+            <div className="grid grid-cols-2 gap-2 sm:gap-4 bg-white p-4 sm:p-8 rounded-2xl shadow-xl border-2 border-primary-200">
+              {/* Top Left - Future UI */}
+              <div className="p-4 sm:p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-xl">
+                <div className="text-blue-900 font-bold text-sm sm:text-base mb-2">FUTURE STATE</div>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-blue-900 mb-2 sm:mb-3">UI & Functionality</h3>
+                <ul className="text-xs sm:text-sm text-blue-800 space-y-1">
+                  <li>• Modern UX/UI</li>
+                  <li>• New workflows</li>
+                  <li>• Enhanced features</li>
+                  <li>• Mobile-first design</li>
+                </ul>
+              </div>
+
+              {/* Top Right - Current UI */}
+              <div className="p-4 sm:p-6 bg-gradient-to-br from-neutral-50 to-neutral-100 border-2 border-neutral-300 rounded-xl">
+                <div className="text-neutral-600 font-bold text-sm sm:text-base mb-2">CURRENT STATE</div>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-neutral-900 mb-2 sm:mb-3">UI & Functionality</h3>
+                <ul className="text-xs sm:text-sm text-neutral-700 space-y-1">
+                  <li>• Legacy interfaces</li>
+                  <li>• Existing workflows</li>
+                  <li>• Current features</li>
+                  <li>• Desktop-focused</li>
+                </ul>
+              </div>
+
+              {/* Bottom Left - Future Platform */}
+              <div className="p-4 sm:p-6 bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-300 rounded-xl">
+                <div className="text-purple-900 font-bold text-sm sm:text-base mb-2">FUTURE STATE</div>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-purple-900 mb-2 sm:mb-3">Data & Platform</h3>
+                <ul className="text-xs sm:text-sm text-purple-800 space-y-1">
+                  <li>• Cloud-native architecture</li>
+                  <li>• AI/ML capabilities</li>
+                  <li>• Modern data platform</li>
+                  <li>• API-first design</li>
+                </ul>
+              </div>
+
+              {/* Bottom Right - Current Platform */}
+              <div className="p-4 sm:p-6 bg-gradient-to-br from-neutral-50 to-neutral-100 border-2 border-neutral-300 rounded-xl">
+                <div className="text-neutral-600 font-bold text-sm sm:text-base mb-2">CURRENT STATE</div>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-neutral-900 mb-2 sm:mb-3">Data & Platform</h3>
+                <ul className="text-xs sm:text-sm text-neutral-700 space-y-1">
+                  <li>• On-premise servers</li>
+                  <li>• Legacy databases</li>
+                  <li>• Monolithic architecture</li>
+                  <li>• Manual processes</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Migration Arrows */}
+            <div className="mt-8 sm:mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+              <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
+                <h4 className="font-bold text-lg sm:text-xl text-neutral-900 mb-3 flex items-center">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                  Horizontal Transformation
+                </h4>
+                <p className="text-sm sm:text-base text-neutral-600 mb-3">
+                  <strong className="text-neutral-900">Current Data → Future UI</strong>
+                </p>
+                <p className="text-xs sm:text-sm text-neutral-600">
+                  Build new user experiences on top of existing data platforms. Keep current infrastructure while modernizing the front-end. Lower risk, faster time-to-value.
+                </p>
+              </div>
+
+              <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-500">
+                <h4 className="font-bold text-lg sm:text-xl text-neutral-900 mb-3 flex items-center">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
+                  </svg>
+                  Vertical Transformation
+                </h4>
+                <p className="text-sm sm:text-base text-neutral-600 mb-3">
+                  <strong className="text-neutral-900">Current UI → Future Platform</strong>
+                </p>
+                <p className="text-xs sm:text-sm text-neutral-600">
+                  Modernize infrastructure and data layer while maintaining familiar user interfaces. Migrate to cloud, add AI capabilities, without disrupting user workflows.
+                </p>
+              </div>
+            </div>
+
+            {/* Dual Migration Path */}
+            <div className="mt-8 sm:mt-12 bg-gradient-to-r from-primary-500 to-primary-600 p-6 sm:p-8 rounded-xl shadow-xl text-white">
+              <h4 className="font-bold text-xl sm:text-2xl mb-4 flex items-center">
+                <svg className="w-6 h-6 sm:w-7 sm:h-7 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Complete Digital Transformation
+              </h4>
+              <p className="text-sm sm:text-base text-primary-50 mb-4">
+                <strong>Current State (UI + Data) → Future State (UI + Data)</strong>
+              </p>
+              <p className="text-sm sm:text-base text-primary-50 leading-relaxed">
+                The ultimate transformation: modern user experiences powered by cloud-native, AI-enabled platforms. DigiForm helps you plan both paths simultaneously, manage dependencies, and create a realistic migration roadmap with timelines, risks, and deliverables.
+              </p>
+            </div>
+          </div>
+
+          {/* Five Architectural Tiers */}
+          <div className="max-w-4xl mx-auto">
+            <h3 className="text-xl sm:text-2xl font-bold text-neutral-900 text-center mb-8">
+              Assessed Across 5 Architectural Tiers
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
+              {[
+                { name: 'UI Tier', icon: '🖥️', desc: 'User interface & experience' },
+                { name: 'API Tier', icon: '🔌', desc: 'Application logic & services' },
+                { name: 'Data Tier', icon: '💾', desc: 'Databases & data platforms' },
+                { name: 'Cloud Tier', icon: '☁️', desc: 'Infrastructure & compute' },
+                { name: 'AI Tier', icon: '🤖', desc: 'ML models & intelligence' }
+              ].map((tier, idx) => (
+                <div key={idx} className="bg-white p-4 rounded-xl border-2 border-neutral-200 text-center hover:border-primary-300 hover:shadow-lg transition-all">
+                  <div className="text-3xl mb-2">{tier.icon}</div>
+                  <div className="font-semibold text-sm text-neutral-900 mb-1">{tier.name}</div>
+                  <div className="text-xs text-neutral-600">{tier.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* How It Works - Mobile Optimized */}
       <section id="how-it-works" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-neutral-50">
         <div className="max-w-7xl mx-auto">
