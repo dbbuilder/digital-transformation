@@ -19,12 +19,17 @@ function App() {
   // Check if user has visited before (has projects or completed onboarding)
   useEffect(() => {
     async function checkFirstVisit() {
-      const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')
-      const projects = await db.projects.toArray()
+      try {
+        const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')
+        const projects = await db.projects.toArray()
 
-      // If user has projects or has seen welcome, skip landing page
-      if (hasSeenWelcome === 'true' || projects.length > 0) {
-        setActiveTab('home')
+        // If user has projects or has seen welcome, skip landing page
+        if (hasSeenWelcome === 'true' || projects.length > 0) {
+          setActiveTab('home')
+        }
+      } catch (error) {
+        console.error('Error checking first visit:', error)
+        // On error, stay on landing page to be safe
       }
     }
     checkFirstVisit()
