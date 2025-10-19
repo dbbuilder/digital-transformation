@@ -5,15 +5,30 @@ import { EducationHub } from './components/education/EducationHub'
 import { WelcomeModal, useWelcomeModal } from './components/onboarding/WelcomeModal'
 import { CreateProjectModal } from './components/projects/CreateProjectModal'
 import { DevTools } from './components/admin/DevTools'
+import { LandingPage } from './components/landing/LandingPage'
 import { useAppStore } from './stores/useAppStore'
 import { db } from './lib/database'
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'home' | 'projects' | 'about' | 'assessments' | 'education'>('home')
+  const [activeTab, setActiveTab] = useState<'landing' | 'home' | 'projects' | 'about' | 'assessments' | 'education'>('landing')
   const [sampleProjectId, setSampleProjectId] = useState<number | null>(null)
   const [assessmentProjectId, setAssessmentProjectId] = useState<number | null>(null)
   const { showWelcome, handleComplete } = useWelcomeModal()
   const { setCreateProjectModalOpen } = useAppStore()
+
+  // Check if user has visited before (has projects or completed onboarding)
+  useEffect(() => {
+    async function checkFirstVisit() {
+      const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')
+      const projects = await db.projects.toArray()
+
+      // If user has projects or has seen welcome, skip landing page
+      if (hasSeenWelcome === 'true' || projects.length > 0) {
+        setActiveTab('home')
+      }
+    }
+    checkFirstVisit()
+  }, [])
 
   // Get the sample project ID on mount
   useEffect(() => {
@@ -32,26 +47,47 @@ function App() {
     setActiveTab('assessments')
   }
 
+  // Handle Get Started from landing page
+  function handleGetStarted() {
+    setActiveTab('home')
+    setTimeout(() => {
+      setCreateProjectModalOpen(true)
+    }, 500)
+  }
+
+  // Show landing page if on landing tab
+  if (activeTab === 'landing') {
+    return <LandingPage onGetStarted={handleGetStarted} />
+  }
+
+  // Mobile menu state
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
-      <header className="bg-white border-b border-neutral-200">
+      {/* Header - Mobile Optimized */}
+      <header className="sticky top-0 z-50 bg-white border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">DT</span>
+            {/* Logo - Responsive */}
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg sm:text-xl">DF</span>
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-neutral-900">Digital Transformation</h1>
+              <div className="hidden sm:block">
+                <h1 className="text-lg sm:text-xl font-bold text-neutral-900">Digital Transformation</h1>
                 <p className="text-xs text-neutral-500">Planning System</p>
+              </div>
+              <div className="sm:hidden">
+                <h1 className="text-lg font-bold text-neutral-900">DigiForm</h1>
               </div>
             </div>
 
-            <nav className="flex space-x-1">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex space-x-1">
               <button
                 onClick={() => setActiveTab('home')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors text-sm lg:text-base ${
                   activeTab === 'home'
                     ? 'bg-primary-50 text-primary-700'
                     : 'text-neutral-600 hover:bg-neutral-100'
@@ -61,7 +97,7 @@ function App() {
               </button>
               <button
                 onClick={() => setActiveTab('projects')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors text-sm lg:text-base ${
                   activeTab === 'projects'
                     ? 'bg-primary-50 text-primary-700'
                     : 'text-neutral-600 hover:bg-neutral-100'
@@ -70,18 +106,8 @@ function App() {
                 Projects
               </button>
               <button
-                onClick={() => setActiveTab('about')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  activeTab === 'about'
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'text-neutral-600 hover:bg-neutral-100'
-                }`}
-              >
-                About
-              </button>
-              <button
                 onClick={() => setActiveTab('assessments')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors text-sm lg:text-base ${
                   activeTab === 'assessments'
                     ? 'bg-primary-50 text-primary-700'
                     : 'text-neutral-600 hover:bg-neutral-100'
@@ -91,7 +117,7 @@ function App() {
               </button>
               <button
                 onClick={() => setActiveTab('education')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors text-sm lg:text-base ${
                   activeTab === 'education'
                     ? 'bg-primary-50 text-primary-700'
                     : 'text-neutral-600 hover:bg-neutral-100'
@@ -99,8 +125,106 @@ function App() {
               >
                 Education
               </button>
+              <button
+                onClick={() => setActiveTab('about')}
+                className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors text-sm lg:text-base ${
+                  activeTab === 'about'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-neutral-600 hover:bg-neutral-100'
+                }`}
+              >
+                About
+              </button>
             </nav>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 text-neutral-600 hover:text-neutral-900"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
           </div>
+
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden py-4 space-y-2 border-t border-neutral-200">
+              <button
+                onClick={() => {
+                  setActiveTab('home')
+                  setMobileMenuOpen(false)
+                }}
+                className={`w-full text-left px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === 'home'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-neutral-600 hover:bg-neutral-100'
+                }`}
+              >
+                Home
+              </button>
+              <button
+                onClick={() => {
+                  setActiveTab('projects')
+                  setMobileMenuOpen(false)
+                }}
+                className={`w-full text-left px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === 'projects'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-neutral-600 hover:bg-neutral-100'
+                }`}
+              >
+                Projects
+              </button>
+              <button
+                onClick={() => {
+                  setActiveTab('assessments')
+                  setMobileMenuOpen(false)
+                }}
+                className={`w-full text-left px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === 'assessments'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-neutral-600 hover:bg-neutral-100'
+                }`}
+              >
+                Assessments
+              </button>
+              <button
+                onClick={() => {
+                  setActiveTab('education')
+                  setMobileMenuOpen(false)
+                }}
+                className={`w-full text-left px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === 'education'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-neutral-600 hover:bg-neutral-100'
+                }`}
+              >
+                Education
+              </button>
+              <button
+                onClick={() => {
+                  setActiveTab('about')
+                  setMobileMenuOpen(false)
+                }}
+                className={`w-full text-left px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === 'about'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-neutral-600 hover:bg-neutral-100'
+                }`}
+              >
+                About
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -108,16 +232,16 @@ function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {activeTab === 'home' && (
           <div className="space-y-8">
-            {/* Hero Section */}
-            <div className="text-center space-y-4">
-              <h2 className="text-4xl font-bold text-neutral-900">
+            {/* Hero Section - Mobile Optimized */}
+            <div className="text-center space-y-4 sm:space-y-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 px-4">
                 Transform Your Organization
               </h2>
-              <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl text-neutral-600 max-w-2xl mx-auto px-4">
                 A comprehensive planning system for digital transformation across
                 UI, API, Data, Cloud, and AI tiers.
               </p>
-              <div className="flex justify-center gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 pt-4 px-4">
                 <button
                   onClick={() => {
                     console.log('Create Project button clicked!')
@@ -125,11 +249,14 @@ function App() {
                     setCreateProjectModalOpen(true)
                     console.log('Modal state should be set to true')
                   }}
-                  className="btn-primary"
+                  className="btn-primary w-full sm:w-auto text-sm sm:text-base"
                 >
                   Create New Project
                 </button>
-                <button className="btn-secondary">
+                <button
+                  onClick={() => setActiveTab('education')}
+                  className="btn-secondary w-full sm:w-auto text-sm sm:text-base"
+                >
                   View Documentation
                 </button>
               </div>
