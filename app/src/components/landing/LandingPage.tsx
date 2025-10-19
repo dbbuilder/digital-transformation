@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface LandingPageProps {
   onGetStarted: () => void
@@ -7,10 +7,19 @@ interface LandingPageProps {
 export function LandingPage({ onGetStarted }: LandingPageProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+  // Ensure viewport is set correctly on mobile
+  useEffect(() => {
+    // Fix for mobile viewport issues
+    const viewport = document.querySelector('meta[name=viewport]')
+    if (viewport) {
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes')
+    }
+  }, [])
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-50 via-white to-neutral-50">
+    <div className="min-h-screen bg-white" style={{ background: 'linear-gradient(to bottom, #faf8fc, #ffffff, #fafafa)' }}>
       {/* Mobile-Optimized Header */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-neutral-200">
+      <header className="sticky top-0 z-50 bg-white border-b border-neutral-200" style={{ backgroundColor: 'rgba(255, 255, 255, 0.95)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 sm:h-20">
             {/* Logo */}
