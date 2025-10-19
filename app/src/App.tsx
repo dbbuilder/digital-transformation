@@ -6,11 +6,12 @@ import { WelcomeModal, useWelcomeModal } from './components/onboarding/WelcomeMo
 import { CreateProjectModal } from './components/projects/CreateProjectModal'
 import { DevTools } from './components/admin/DevTools'
 import { LandingPage } from './components/landing/LandingPage'
+import { PathRecommendationView } from './components/decision/PathRecommendation'
 import { useAppStore } from './stores/useAppStore'
 import { db } from './lib/database'
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'landing' | 'home' | 'projects' | 'about' | 'assessments' | 'education'>('landing')
+  const [activeTab, setActiveTab] = useState<'landing' | 'home' | 'projects' | 'about' | 'assessments' | 'decision' | 'education'>('landing')
   const [sampleProjectId, setSampleProjectId] = useState<number | null>(null)
   const [assessmentProjectId, setAssessmentProjectId] = useState<number | null>(null)
   const { showWelcome, handleComplete } = useWelcomeModal()
@@ -114,6 +115,16 @@ function App() {
                 Assessments
               </button>
               <button
+                onClick={() => setActiveTab('decision')}
+                className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors text-sm lg:text-base ${
+                  activeTab === 'decision'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-neutral-600 hover:bg-neutral-100'
+                }`}
+              >
+                Decision
+              </button>
+              <button
                 onClick={() => setActiveTab('education')}
                 className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors text-sm lg:text-base ${
                   activeTab === 'education'
@@ -194,6 +205,19 @@ function App() {
                 }`}
               >
                 Assessments
+              </button>
+              <button
+                onClick={() => {
+                  setActiveTab('decision')
+                  setMobileMenuOpen(false)
+                }}
+                className={`w-full text-left px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === 'decision'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-neutral-600 hover:bg-neutral-100'
+                }`}
+              >
+                Decision
               </button>
               <button
                 onClick={() => {
@@ -430,6 +454,16 @@ function App() {
         )}
 
         {activeTab === 'assessments' && !assessmentProjectId && !sampleProjectId && (
+          <div className="text-center py-12">
+            <div className="text-neutral-500">Loading project...</div>
+          </div>
+        )}
+
+        {activeTab === 'decision' && sampleProjectId && (
+          <PathRecommendationView projectId={sampleProjectId} />
+        )}
+
+        {activeTab === 'decision' && !sampleProjectId && (
           <div className="text-center py-12">
             <div className="text-neutral-500">Loading project...</div>
           </div>
