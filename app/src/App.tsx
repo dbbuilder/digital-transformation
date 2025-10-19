@@ -27,11 +27,11 @@ function App() {
           return
         }
 
-        const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')
         const projects = await db.projects.toArray()
 
-        // If user has projects or has seen welcome, skip landing page
-        if (hasSeenWelcome === 'true' || projects.length > 0) {
+        // Only skip landing page if user has created projects
+        // (Remove hasSeenWelcome check - always show landing to new sessions)
+        if (projects.length > 0) {
           setActiveTab('home')
         }
       } catch (error) {
