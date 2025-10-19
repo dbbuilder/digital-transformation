@@ -20,6 +20,13 @@ function App() {
   useEffect(() => {
     async function checkFirstVisit() {
       try {
+        // Allow forcing landing page with ?landing=true parameter
+        const urlParams = new URLSearchParams(window.location.search)
+        if (urlParams.get('landing') === 'true') {
+          setActiveTab('landing')
+          return
+        }
+
         const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')
         const projects = await db.projects.toArray()
 
