@@ -11,7 +11,7 @@ NC='\033[0m'
 
 # Configuration
 SUPABASE_URL="https://grglttyirzxfdpbyuxut.supabase.co"
-SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZ2x0dHlpcnp4ZmRwYnl1eHV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI0NjQyODAsImV4cCI6MjA0ODA0MDI4MH0.KZlS7p3CsQFIeFasvR7n8gU4rCjGSYvBWznf8K1Ck-k"
+SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZ2x0dHlpcnp4ZmRwYnl1eHV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MzUzNDgsImV4cCI6MjA2NzQxMTM0OH0.-ZU38fETcom_K3-tTBHjGVLcmG98_Fmt0XsBBRS38dM"
 TEST_EMAIL="${1:-info@servicevision.net}"
 
 echo -e "${GREEN}╔══════════════════════════════════════════════════════════╗${NC}"
