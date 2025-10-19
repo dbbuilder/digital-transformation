@@ -16,30 +16,16 @@ function App() {
   const { showWelcome, handleComplete } = useWelcomeModal()
   const { setCreateProjectModalOpen } = useAppStore()
 
-  // Check if user has visited before (has projects or completed onboarding)
+  // Always start on landing page - user must click "Get Started" to enter app
+  // This ensures every visitor sees the marketing page
   useEffect(() => {
-    async function checkFirstVisit() {
-      try {
-        // Allow forcing landing page with ?landing=true parameter
-        const urlParams = new URLSearchParams(window.location.search)
-        if (urlParams.get('landing') === 'true') {
-          setActiveTab('landing')
-          return
-        }
-
-        const projects = await db.projects.toArray()
-
-        // Only skip landing page if user has created projects
-        // (Remove hasSeenWelcome check - always show landing to new sessions)
-        if (projects.length > 0) {
-          setActiveTab('home')
-        }
-      } catch (error) {
-        console.error('Error checking first visit:', error)
-        // On error, stay on landing page to be safe
-      }
+    // Allow forcing landing page with ?landing=true parameter (already default)
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('app') === 'true') {
+      // Allow direct link to app with ?app=true
+      setActiveTab('home')
     }
-    checkFirstVisit()
+    // Otherwise stay on landing page (default state)
   }, [])
 
   // Get the sample project ID on mount
