@@ -7,11 +7,12 @@ import { CreateProjectModal } from './components/projects/CreateProjectModal'
 import { DevTools } from './components/admin/DevTools'
 import { LandingPage } from './components/landing/LandingPage'
 import { PathRecommendationView } from './components/decision/PathRecommendation'
+import { AISettings } from './components/settings/AISettings'
 import { useAppStore } from './stores/useAppStore'
 import { db } from './lib/database'
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'landing' | 'home' | 'projects' | 'about' | 'assessments' | 'decision' | 'education'>('landing')
+  const [activeTab, setActiveTab] = useState<'landing' | 'home' | 'projects' | 'about' | 'assessments' | 'decision' | 'education' | 'settings'>('landing')
   const [sampleProjectId, setSampleProjectId] = useState<number | null>(null)
   const [assessmentProjectId, setAssessmentProjectId] = useState<number | null>(null)
   const { showWelcome, handleComplete } = useWelcomeModal()
@@ -135,6 +136,16 @@ function App() {
                 Education
               </button>
               <button
+                onClick={() => setActiveTab('settings')}
+                className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors text-sm lg:text-base ${
+                  activeTab === 'settings'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-neutral-600 hover:bg-neutral-100'
+                }`}
+              >
+                Settings
+              </button>
+              <button
                 onClick={() => setActiveTab('about')}
                 className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors text-sm lg:text-base ${
                   activeTab === 'about'
@@ -231,6 +242,19 @@ function App() {
                 }`}
               >
                 Education
+              </button>
+              <button
+                onClick={() => {
+                  setActiveTab('settings')
+                  setMobileMenuOpen(false)
+                }}
+                className={`w-full text-left px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === 'settings'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-neutral-600 hover:bg-neutral-100'
+                }`}
+              >
+                Settings
               </button>
               <button
                 onClick={() => {
@@ -470,6 +494,8 @@ function App() {
         )}
 
         {activeTab === 'education' && <EducationHub />}
+
+        {activeTab === 'settings' && <AISettings />}
       </main>
 
       {/* Footer */}
