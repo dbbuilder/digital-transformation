@@ -29,10 +29,13 @@ function LoadingFallback() {
 
 function App() {
   const [activeTab, setActiveTab] = useState<'landing' | 'home' | 'projects' | 'about' | 'assessments' | 'decision' | 'deliverables' | 'education' | 'settings'>('landing')
+  const [forceRender, setForceRender] = useState(0)
   const [sampleProjectId, setSampleProjectId] = useState<number | null>(null)
   const [assessmentProjectId, setAssessmentProjectId] = useState<number | null>(null)
   const { showWelcome, handleComplete } = useWelcomeModal()
   const { setCreateProjectModalOpen } = useAppStore()
+
+  console.log('APP RENDER - activeTab:', activeTab, 'forceRender:', forceRender)
 
   // Always start on landing page - user must click "Get Started" to enter app
   // This ensures every visitor sees the marketing page
@@ -79,21 +82,24 @@ function App() {
     console.log('Setting activeTab to: home')
     console.log('========================================')
 
-    // Try functional form of setState
-    setActiveTab((prevTab) => {
-      alert('Inside setActiveTab - prevTab: ' + prevTab + ', setting to: home')
-      return 'home'
-    })
+    // Try BOTH state updates together
+    setActiveTab('home')
+    setForceRender(prev => prev + 1)
+
+    setTimeout(() => {
+      alert('After setState - activeTab: ' + activeTab + ', checking DOM...')
+      console.log('DOM check - activeTab should be home')
+    }, 200)
 
     console.log('========================================')
     console.log('After setActiveTab call')
     console.log('========================================')
   }
 
-  // Show landing page if on landing tab
-  if (activeTab === 'landing') {
-    return <LandingPage onGetStarted={handleGetStarted} />
-  }
+  // TEMPORARILY DISABLED - Skip landing page for debugging
+  // if (activeTab === 'landing') {
+  //   return <LandingPage onGetStarted={handleGetStarted} />
+  // }
 
   // Mobile menu state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
