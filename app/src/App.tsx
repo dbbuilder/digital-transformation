@@ -46,6 +46,12 @@ function App() {
     // Otherwise stay on landing page (default state)
   }, [])
 
+  // DEBUG: Track activeTab changes
+  useEffect(() => {
+    console.log('=== ACTIVE TAB CHANGED ===', activeTab)
+    alert('ActiveTab changed to: ' + activeTab)
+  }, [activeTab])
+
   // Get the sample project ID on mount
   useEffect(() => {
     async function getSampleProject() {
@@ -74,7 +80,10 @@ function App() {
 
     setActiveTab('home')
 
-    alert('After setActiveTab - should be home now')
+    // Force a re-render check after state update
+    setTimeout(() => {
+      alert('After timeout - activeTab is now: ' + activeTab)
+    }, 100)
 
     console.log('========================================')
     console.log('After setActiveTab, activeTab should be home')
