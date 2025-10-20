@@ -10,8 +10,8 @@ interface AppState {
   setCurrentProjectId: (id: number | null) => void
 
   // UI state
-  activeTab: 'home' | 'projects' | 'about' | 'assessments' | 'education'
-  setActiveTab: (tab: 'home' | 'projects' | 'about' | 'assessments' | 'education') => void
+  activeTab: 'landing' | 'home' | 'projects' | 'about' | 'assessments' | 'decision' | 'deliverables' | 'education' | 'settings'
+  setActiveTab: (tab: 'landing' | 'home' | 'projects' | 'about' | 'assessments' | 'decision' | 'deliverables' | 'education' | 'settings') => void
 
   sidebarOpen: boolean
   toggleSidebar: () => void
@@ -56,7 +56,7 @@ export const useAppStore = create<AppState>()(
       setCurrentProjectId: (id) => set({ currentProjectId: id }),
 
       // UI state
-      activeTab: 'home',
+      activeTab: 'landing',
       setActiveTab: (tab) => set({ activeTab: tab }),
 
       sidebarOpen: true,

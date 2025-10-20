@@ -28,12 +28,11 @@ function LoadingFallback() {
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'landing' | 'home' | 'projects' | 'about' | 'assessments' | 'decision' | 'deliverables' | 'education' | 'settings'>('landing')
-  const [forceRender, setForceRender] = useState(0)
+  // Use Zustand store for activeTab to ensure persistence and proper reactivity
+  const { activeTab, setActiveTab, setCreateProjectModalOpen } = useAppStore()
   const [sampleProjectId, setSampleProjectId] = useState<number | null>(null)
   const [assessmentProjectId, setAssessmentProjectId] = useState<number | null>(null)
   const { showWelcome, handleComplete } = useWelcomeModal()
-  const { setCreateProjectModalOpen } = useAppStore()
 
   // Allow direct link to app with ?app=true parameter
   useEffect(() => {
@@ -64,9 +63,8 @@ function App() {
   // Show landing page if on landing tab
   if (activeTab === 'landing') {
     return <LandingPage onGetStarted={() => {
-      console.log('GET STARTED CLICKED - Changing to home')
+      console.log('GET STARTED CLICKED - Using Zustand setActiveTab')
       setActiveTab('home')
-      setForceRender(prev => prev + 1)
     }} />
   }
 
