@@ -35,26 +35,13 @@ function App() {
   const { showWelcome, handleComplete } = useWelcomeModal()
   const { setCreateProjectModalOpen } = useAppStore()
 
-  console.log('APP RENDER - activeTab:', activeTab, 'forceRender:', forceRender)
-
-  // Always start on landing page - user must click "Get Started" to enter app
-  // This ensures every visitor sees the marketing page
-  // DISABLED FOR DEBUGGING
-  // useEffect(() => {
-  //   // Allow forcing landing page with ?landing=true parameter (already default)
-  //   const urlParams = new URLSearchParams(window.location.search)
-  //   if (urlParams.get('app') === 'true') {
-  //     // Allow direct link to app with ?app=true
-  //     setActiveTab('home')
-  //   }
-  //   // Otherwise stay on landing page (default state)
-  // }, [])
-
-  // DEBUG: Track activeTab changes
+  // Allow direct link to app with ?app=true parameter
   useEffect(() => {
-    console.log('=== ACTIVE TAB CHANGED ===', activeTab)
-    alert('ActiveTab changed to: ' + activeTab)
-  }, [activeTab])
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('app') === 'true') {
+      setActiveTab('home')
+    }
+  }, [])
 
   // Get the sample project ID on mount
   useEffect(() => {
@@ -73,47 +60,21 @@ function App() {
     setActiveTab('assessments')
   }
 
-  // Handle Get Started from landing page
-  function handleGetStarted() {
-    alert('handleGetStarted called! Current tab: ' + activeTab)
-    console.log('========================================')
-    console.log('HANDLE GET STARTED CALLED')
-    console.log('Current activeTab:', activeTab)
-    console.log('Setting activeTab to: home')
-    console.log('========================================')
 
-    // Try BOTH state updates together
-    setActiveTab('home')
-    setForceRender(prev => prev + 1)
-
-    setTimeout(() => {
-      alert('After setState - activeTab: ' + activeTab + ', checking DOM...')
-      console.log('DOM check - activeTab should be home')
-    }, 200)
-
-    console.log('========================================')
-    console.log('After setActiveTab call')
-    console.log('========================================')
+  // Show landing page if on landing tab
+  if (activeTab === 'landing') {
+    return <LandingPage onGetStarted={() => {
+      console.log('GET STARTED CLICKED - Changing to home')
+      setActiveTab('home')
+      setForceRender(prev => prev + 1)
+    }} />
   }
-
-  // TEMPORARILY DISABLED - Skip landing page for debugging
-  // if (activeTab === 'landing') {
-  //   return <LandingPage onGetStarted={handleGetStarted} />
-  // }
 
   // Mobile menu state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <div className={`min-h-screen ${activeTab === 'home' ? 'bg-blue-200' : 'bg-neutral-50'}`}>
-      {/* Debug Info - Remove after testing */}
-      {console.log('=== APP RENDER ===', 'activeTab:', activeTab, 'createProjectModalOpen:', useAppStore.getState().createProjectModalOpen)}
-
-      {/* MASSIVE DEBUG OVERLAY */}
-      <div className="fixed top-0 left-0 bg-black text-white p-2 z-[9999] text-xs">
-        ActiveTab: {activeTab} | Time: {new Date().toISOString()}
-      </div>
-
+    <div className="min-h-screen bg-neutral-50">
       {/* Header - Mobile Optimized */}
       <header className="sticky top-0 z-50 bg-white border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -403,8 +364,8 @@ function App() {
               </div>
             </div>
 
-            {/* Feature Cards */}
-            <div className="grid md:grid-cols-2 gap-6 pt-8">
+            {/* Feature Cards - Mobile Optimized */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pt-6 sm:pt-8">
               <div className="card hover:shadow-md transition-shadow">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
