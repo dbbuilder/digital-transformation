@@ -65,10 +65,22 @@ function App() {
 
   // Handle Get Started from landing page
   function handleGetStarted() {
+    console.log('========================================')
+    console.log('HANDLE GET STARTED CALLED')
+    console.log('Current activeTab:', activeTab)
+    console.log('Setting activeTab to: home')
+    console.log('========================================')
+
     setActiveTab('home')
-    setTimeout(() => {
-      setCreateProjectModalOpen(true)
-    }, 500)
+
+    console.log('========================================')
+    console.log('After setActiveTab, scheduling modal open')
+    console.log('========================================')
+
+    // Don't open modal automatically - let user see the home page first
+    // setTimeout(() => {
+    //   setCreateProjectModalOpen(true)
+    // }, 500)
   }
 
   // Show landing page if on landing tab
@@ -328,9 +340,17 @@ function App() {
         <Suspense fallback={<LoadingFallback />}>
           {activeTab === 'home' && (
           <div className="space-y-6 sm:space-y-8">
-            {/* CACHE BUSTER - VERSION 2025-10-20 04:25 */}
+            {/* MASSIVE OBVIOUS INDICATOR */}
+            <div className="bg-red-600 text-white p-8 text-center font-bold text-4xl rounded-lg mb-4 border-8 border-yellow-300">
+              ✅ HOME PAGE IS SHOWING!
+              <div className="text-2xl mt-4">
+                If you see this, the page loaded successfully
+              </div>
+            </div>
+
+            {/* CACHE BUSTER - VERSION 2025-10-20 04:40 */}
             <div className="bg-yellow-300 text-black p-4 text-center font-bold text-xl rounded-lg mb-4">
-              ⚡ CACHE BUSTED - NEW VERSION LOADED ⚡
+              ⚡ CACHE BUSTED - VERSION 04:40 ⚡
             </div>
 
             {/* Hero Section - Mobile Optimized */}
