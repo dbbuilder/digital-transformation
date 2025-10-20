@@ -17,10 +17,11 @@ const DeliverablesView = lazy(() => import('./components/deliverables/Deliverabl
 // Loading fallback component
 function LoadingFallback() {
   return (
-    <div className="flex items-center justify-center min-h-[400px]">
-      <div className="text-center">
+    <div className="flex items-center justify-center min-h-[400px] bg-white rounded-lg shadow-sm m-4">
+      <div className="text-center p-8">
         <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mb-4"></div>
-        <p className="text-neutral-600">Loading...</p>
+        <p className="text-neutral-900 font-semibold text-lg">Loading...</p>
+        <p className="text-neutral-600 text-sm mt-2">Please wait</p>
       </div>
     </div>
   )
@@ -317,12 +318,19 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 min-h-[calc(100vh-4rem)]">
+        {/* Visible debug indicator - remove after testing */}
+        {activeTab === 'home' && (
+          <div className="fixed top-20 right-4 bg-green-500 text-white px-3 py-1 rounded text-xs z-50">
+            Home Tab Active
+          </div>
+        )}
+
         <Suspense fallback={<LoadingFallback />}>
           {activeTab === 'home' && (
           <div className="space-y-6 sm:space-y-8">
             {/* Hero Section - Mobile Optimized */}
-            <div className="text-center space-y-4 sm:space-y-6">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 px-4">
+            <div className="text-center space-y-4 sm:space-y-6 bg-white p-6 rounded-lg shadow-sm">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900">
                 Transform Your Organization
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-neutral-600 max-w-2xl mx-auto px-4">
