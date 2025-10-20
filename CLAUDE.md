@@ -102,7 +102,8 @@ Transformation progresses diagonally (Future UI ↔ Current Data, Current UI ↔
 - Vite 7.1+ (build tool, dev server)
 - Zustand 5.0+ (state management with persist middleware)
 - Tailwind CSS 4.1+ (styling with @tailwindcss/postcss)
-- React Router DOM 7.9+ (routing)
+- Lucide React 0.468+ (icon library)
+- OpenAI API (GPT-4o Mini for AI features)
 
 **Data & Storage** (Currently Implemented):
 - Dexie.js 4.2+ (IndexedDB wrapper)
@@ -115,10 +116,12 @@ Transformation progresses diagonally (Future UI ↔ Current Data, Current UI ↔
 - html2canvas (PNG export)
 - Custom SVG rendering
 
-**Export/Import** (Planned):
-- PptxGenJS (PowerPoint generation)
-- jsPDF (PDF generation)
-- SheetJS (Excel generation)
+**Export/Import** (Currently Implemented):
+- PptxGenJS 3.12+ (PowerPoint generation - working)
+- html2canvas 1.4+ (PNG/canvas export)
+- DOMPurify (HTML sanitization)
+- jsPDF (PDF generation) - planned
+- SheetJS (Excel generation) - planned
 
 **Offline & PWA** (Planned):
 - Workbox (Service Worker)
@@ -140,12 +143,9 @@ Transformation progresses diagonally (Future UI ↔ Current Data, Current UI ↔
 
 ## Development Commands
 
-**Working Directory**: All commands must be run from the `/app` directory.
+**Working Directory**: All commands are run from the repository root (not the `/app` subdirectory).
 
 ```bash
-# Navigate to app directory first
-cd app
-
 # Development
 npm run dev              # Start dev server with hot reload (Vite)
 npm run build            # Build for production (TypeScript + Vite)
@@ -161,14 +161,39 @@ npm run lint             # Lint code (ESLint)
 
 ---
 
+## Deployment
+
+The application is configured for both **Netlify** and **Vercel** via:
+- `app/netlify.toml` - Netlify configuration with SPA routing and security headers
+- `app/vercel.json` - Vercel configuration with rewrites and headers
+
+**Deployment Process**:
+1. Push to `main` branch triggers automatic deployment
+2. Both platforms build from the `app/` directory
+3. Build command: `npm run build`
+4. Output directory: `dist/`
+5. SPA routing: All routes rewrite to `/index.html`
+
+**Repository**: https://github.com/dbbuilder/digital-transformation.git
+
+**Security Headers** (automatically applied):
+- `X-Frame-Options: DENY`
+- `X-Content-Type-Options: nosniff`
+- `X-XSS-Protection: 1; mode=block`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- Cache-Control for assets: `public, max-age=31536000, immutable`
+
+---
+
 ## Current Implementation State
 
 ### Completed Components
 
 **Database Layer** (`app/src/lib/database.ts`):
-- Dexie.js database schema with 9 tables: projects, stakeholders, assessments, assessmentResponses, interviewQuestions, roadmaps, roadmapPhases, fourCornerData, documents, exports
+- Dexie.js database schema v2 with 13 tables (projects, stakeholders, assessments, assessmentResponses, interviewQuestions, roadmaps, roadmapPhases, fourCornerData, documents, exports, syncMetadata, deliverables, workflowSteps)
 - Helper functions: `initializeDatabase()`, `getProjectWithDetails()`, `calculateProjectProgress()`, `searchProjects()`, `exportAllData()`, `importData()`, `clearAllData()`
-- Sample data initialization for demo purposes
+- Sample data initialization with working project for demo
+- Database migrations implemented for schema evolution
 
 **State Management** (`app/src/stores/useAppStore.ts`):
 - Zustand store with localStorage persistence
@@ -180,29 +205,69 @@ npm run lint             # Lint code (ESLint)
 **Type Definitions** (`app/src/types/index.ts`):
 - All core TypeScript interfaces and types
 - Enums: TransformationPath, Phase, Tier, ProjectStatus, AssessmentStatus, Priority, RoadmapPhaseStatus, FourCornerQuadrant
-- Entities: Project, Stakeholder, Assessment, AssessmentResponse, InterviewQuestion, Roadmap, RoadmapPhase, FourCornerData, Document, Export
+- Entities: Project, Stakeholder, Assessment, AssessmentResponse, InterviewQuestion, Roadmap, RoadmapPhase, FourCornerData, Document, Export, SyncMetadata, Deliverable, WorkflowStep
 
-**UI Components**:
-- `App.tsx`: Main application shell with tab navigation (Home, Projects, About)
-- `CreateProjectModal.tsx`: Modal for creating new transformation projects
-- `AssessmentsPage.tsx`: Parent container for assessment workflow
-- `AssessmentList.tsx`: 5×5 matrix view of all assessments (phases × tiers)
-- `InterviewForm.tsx`: Question-by-question interview interface with auto-save
-- Basic color palette implementation with Pastel Lilac primary colors
+**UI Components** (34+ components):
+- `App.tsx`: Main application shell with mobile-optimized navigation, lazy-loaded routes
+- `LandingPage.tsx`: Marketing page with DigiForm branding (always shown first)
+- `ProjectsPage.tsx`, `ProjectList.tsx`, `ProjectDetail.tsx`: Full project management with mobile-responsive layouts
+- `AssessmentsPage.tsx`, `AssessmentList.tsx`, `AssessmentDashboard.tsx`: 5×5 matrix and dashboard views
+- `EnhancedInterviewForm.tsx`: AI-powered interview with response refinement and gap detection
+- `PathRecommendation.tsx`: AI-driven transformation path analysis
+- `DeliverablesView.tsx`: PowerPoint and document generation UI
+- `SettingsView.tsx`: API key management and settings
+- `EducationHub.tsx`: Documentation and methodology viewer
+- `RoadmapTimeline.tsx`: 32-week transformation timeline
+- `DevTools.tsx`: Developer utilities (clear data, test AI, etc.)
+- Mobile-optimized with proper touch targets (44px) and responsive breakpoints
+
+**AI Integration** (`app/src/services/AIService.ts`):
+- OpenAI GPT-4o Mini client for intelligent features
+- Assessment response analysis and refinement
+- Gap detection across transformation tiers
+- Path recommendation engine with readiness scoring
+- Configurable via user-supplied API key (stored in IndexedDB)
+
+**Export/Deliverables** (`app/src/services/PowerPointGenerator.ts`):
+- Working PowerPoint generation with PptxGenJS
+- Executive summary slide decks
+- Four-corner diagram slides
+- Roadmap timeline visualization
+- Assessment results compilation
 
 **CSV Import System** (`app/src/lib/csvImporter.ts`):
 - Parses CSV interview templates and imports to IndexedDB
-- Seeds 40+ questions across 4 phases (Discovery, Foundation, Modernization, Intelligence)
+- Seeds 100+ questions across 4 phases (Discovery, Foundation, Modernization, Intelligence)
 - Helper functions: `getQuestionsByPhaseTier()`, `getQuestionsByPhase()`, `searchQuestions()`
 - Auto-initialized on app startup via `main.tsx`
 
+**Sample Data** (`app/src/services/SampleDataService.ts`):
+- Pre-populated demo project: "TechCorp Digital Transformation"
+- Complete assessment responses across all tiers
+- Stakeholder data, roadmap phases, deliverables
+- Allows immediate exploration of features
+
+**Sync System** (Partially Implemented):
+- `SyncService.ts`: Supabase sync service (backend integration drafted)
+- `SyncManager.tsx`: UI for sync controls (not yet wired to main app)
+- Conflict resolution strategies defined
+- Offline-first with eventual consistency model
+
+### Recently Completed (2025-10-19)
+
+- Mobile deployment fixes: responsive layouts, touch targets, proper padding
+- Removed nested `min-h-screen` containers causing mobile layout issues
+- Added `flex-1 sm:flex-none` pattern for mobile tab buttons
+- Installed missing `lucide-react` dependency
+- Verified production build succeeds (bundle size: ~420KB main chunk)
+- Deployed to GitHub with automatic CI/CD to Netlify/Vercel
+
 ### In Progress
 
-- Assessment dashboard with tier completion visualization
-- Response validation and evidence file attachment
-- Project list view and project detail pages
-- Four-corner diagram builder
-- Roadmap timeline generator
+- Supabase sync UI integration (service written, UI needs wiring)
+- Four-corner diagram interactive editor (basic structure exists)
+- Workflow wizard for guided transformation planning
+- Enhanced deliverables: SOW generation, Excel reports
 
 ---
 
@@ -223,27 +288,48 @@ All application state lives in Zustand stores with the following slices:
 
 ### Data Access Layer (Dexie.js)
 
-All database access goes through repository classes:
+Database access is direct via Dexie API (no repository pattern currently):
 
-- `ProjectRepository`: CRUD for projects
-- `AssessmentRepository`: Manage assessments and responses
-- `RoadmapRepository`: Roadmaps, tasks, milestones
-- `DeliverableRepository`: Templates and deliverables
+```typescript
+import { db } from './lib/database'
 
-**Important**: Use Dexie transactions for multi-table operations to maintain consistency.
+// Example: Query projects
+const projects = await db.projects.toArray()
+const activeProjects = await db.projects.where('status').equals('active').toArray()
+
+// Example: Get project with relations
+const project = await db.projects.get(projectId)
+const assessments = await db.assessments.where('projectId').equals(projectId).toArray()
+
+// Example: Transactions for multi-table operations
+await db.transaction('rw', [db.projects, db.assessments], async () => {
+  await db.projects.put(project)
+  await db.assessments.bulkPut(assessments)
+})
+```
+
+**Important**:
+- Use Dexie transactions for multi-table operations to maintain consistency
+- All tables are defined in `app/src/lib/database.ts` with typed interfaces
+- Repository pattern is planned but not yet implemented
 
 ### Service Layer
 
-Business logic lives in service classes:
+Business logic lives in service classes (in `app/src/services/`):
 
-- `ProjectService`: Project lifecycle, cloning, export/import
-- `AssessmentService`: Load templates, calculate readiness scores
-- `DiagramService`: Generate and export diagrams
-- `RoadmapService`: Timeline calculations, critical path detection
-- `DeliverableService`: Document generation from templates
-- `DecisionFrameworkService`: Path recommendation, risk analysis
+- `AIService.ts`: OpenAI integration for intelligent features (IMPLEMENTED)
+- `PowerPointGenerator.ts`: PptxGenJS-based presentation generation (IMPLEMENTED)
+- `SampleDataService.ts`: Demo project initialization (IMPLEMENTED)
+- `SyncService.ts`: Supabase sync and conflict resolution (DRAFTED)
+- `ProjectService`: Project lifecycle, cloning, export/import (PLANNED)
+- `AssessmentService`: Load templates, calculate readiness scores (PLANNED)
+- `DiagramService`: Generate and export diagrams (PLANNED)
+- `RoadmapService`: Timeline calculations, critical path detection (PLANNED)
 
-**Important**: Services should NOT directly access stores—pass data as parameters.
+**Important**:
+- Services should NOT directly access stores—pass data as parameters
+- Services should be pure functions that operate on data passed in
+- Use Dexie directly for database operations (no repository abstraction layer yet)
 
 ### Component Hierarchy
 
@@ -547,12 +633,49 @@ function Header() {
 - **Polyfills**: Only if absolutely necessary (keep bundle small)
 - **Feature detection**: Always check for feature support before using (IndexedDB, Service Worker)
 
+### Mobile Optimization (Critical)
+
+The application MUST be fully functional on mobile devices. Follow these patterns:
+
+**Layout Patterns**:
+- Use `flex-col sm:flex-row` for stacked-on-mobile, side-by-side-on-desktop layouts
+- Use `w-full sm:w-auto` for buttons that should be full-width on mobile
+- Use `flex-1 sm:flex-none` for equal-width mobile tabs
+- Use `text-sm sm:text-base` or `text-xl sm:text-2xl` for responsive text sizing
+- Use `p-4 sm:p-6` for responsive padding (cards, containers)
+- Use `flex-wrap` for badge/chip containers that need to wrap on mobile
+- Use `break-words` for long text that might overflow (project names, descriptions)
+
+**Touch Targets**:
+- All buttons MUST have `min-height: 44px` (iOS/Android HIG minimum)
+- All input fields MUST have `min-height: 44px`
+- Use the `.btn-primary` and `.btn-secondary` classes which include proper touch targets
+- Tab buttons should use `flex-1 sm:flex-none` for easier mobile tapping
+
+**Component Wrappers**:
+- AVOID nested `min-h-screen` containers - use only once at app level in App.tsx
+- Child components should NOT include their own `min-h-screen` or wrapper divs with padding
+- The App.tsx `<main>` already provides proper padding (`px-4 sm:px-6 lg:px-8`)
+
+**Mobile-Specific CSS** (in `index.css`):
+- `-webkit-text-size-adjust: 100%` prevents iOS text scaling
+- `-webkit-overflow-scrolling: touch` enables momentum scrolling
+- `-webkit-tap-highlight-color: transparent` removes tap highlight
+- `overflow-x: hidden` and `max-width: 100vw` prevents horizontal scroll
+
+**Testing Mobile**:
+- Always test with Chrome DevTools mobile emulation (iPhone, Pixel, iPad)
+- Verify touch targets are easily tappable (44x44px minimum)
+- Ensure no horizontal scrolling occurs
+- Check that modals and overlays work on small screens
+
 ### Performance Targets
 
 - **Initial load**: < 2 seconds on 3G connection
 - **Interaction response**: < 200ms for UI interactions
-- **Bundle size**: < 500KB gzipped for initial load
+- **Bundle size**: < 500KB gzipped for initial load (currently ~420KB main chunk)
 - **Lighthouse score**: 90+ for Performance, Accessibility, Best Practices, SEO
+- **Code splitting**: Use lazy loading for route-level components (already implemented)
 
 ---
 

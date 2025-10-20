@@ -80,6 +80,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
+      {/* Debug Info - Remove after testing */}
+      {console.log('App render - activeTab:', activeTab, 'createProjectModalOpen:', useAppStore.getState().createProjectModalOpen)}
+
       {/* Header - Mobile Optimized */}
       <header className="sticky top-0 z-50 bg-white border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -313,10 +316,10 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 min-h-[calc(100vh-4rem)]">
         <Suspense fallback={<LoadingFallback />}>
           {activeTab === 'home' && (
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* Hero Section - Mobile Optimized */}
             <div className="text-center space-y-4 sm:space-y-6">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 px-4">

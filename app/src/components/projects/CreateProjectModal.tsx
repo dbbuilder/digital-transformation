@@ -82,11 +82,11 @@ export function CreateProjectModal() {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 flex items-start sm:items-center justify-center z-50 p-0 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-b-xl sm:rounded-xl shadow-xl max-w-2xl w-full max-h-screen sm:max-h-[90vh] overflow-y-auto my-0 sm:my-4">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-neutral-200">
-          <h2 className="text-2xl font-bold text-neutral-900">Create New Project</h2>
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-neutral-200 sticky top-0 bg-white z-10">
+          <h2 className="text-xl sm:text-2xl font-bold text-neutral-900">Create New Project</h2>
           <button
             onClick={handleClose}
             disabled={loading}
@@ -99,7 +99,7 @@ export function CreateProjectModal() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
           {/* Project Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-neutral-700 mb-1">
