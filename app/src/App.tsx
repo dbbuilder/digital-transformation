@@ -92,9 +92,14 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className={`min-h-screen ${activeTab === 'home' ? 'bg-blue-200' : 'bg-neutral-50'}`}>
       {/* Debug Info - Remove after testing */}
-      {console.log('App render - activeTab:', activeTab, 'createProjectModalOpen:', useAppStore.getState().createProjectModalOpen)}
+      {console.log('=== APP RENDER ===', 'activeTab:', activeTab, 'createProjectModalOpen:', useAppStore.getState().createProjectModalOpen)}
+
+      {/* MASSIVE DEBUG OVERLAY */}
+      <div className="fixed top-0 left-0 bg-black text-white p-2 z-[9999] text-xs">
+        ActiveTab: {activeTab} | Time: {new Date().toISOString()}
+      </div>
 
       {/* Header - Mobile Optimized */}
       <header className="sticky top-0 z-50 bg-white border-b border-neutral-200">
