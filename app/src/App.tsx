@@ -328,12 +328,20 @@ function App() {
         <Suspense fallback={<LoadingFallback />}>
           {activeTab === 'home' && (
           <div className="space-y-6 sm:space-y-8">
+            {/* CACHE BUSTER - VERSION 2025-10-20 04:25 */}
+            <div className="bg-yellow-300 text-black p-4 text-center font-bold text-xl rounded-lg mb-4">
+              ⚡ CACHE BUSTED - NEW VERSION LOADED ⚡
+            </div>
+
             {/* Hero Section - Mobile Optimized */}
-            <div className="text-center space-y-4 sm:space-y-6 bg-white p-6 rounded-lg shadow-sm">
+            <div className="text-center space-y-4 sm:space-y-6 bg-gradient-to-br from-primary-100 to-white p-8 rounded-lg shadow-lg border-2 border-primary-300">
+              <div className="text-primary-600 font-bold text-sm uppercase tracking-wide mb-2">
+                🚀 Welcome to DigiForm
+              </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900">
                 Transform Your Organization
               </h2>
-              <p className="text-base sm:text-lg md:text-xl text-neutral-600 max-w-2xl mx-auto px-4">
+              <p className="text-base sm:text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto">
                 A comprehensive planning system for digital transformation across
                 UI, API, Data, Cloud, and AI tiers.
               </p>
