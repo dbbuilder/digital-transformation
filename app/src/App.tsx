@@ -36,15 +36,16 @@ function App() {
 
   // Always start on landing page - user must click "Get Started" to enter app
   // This ensures every visitor sees the marketing page
-  useEffect(() => {
-    // Allow forcing landing page with ?landing=true parameter (already default)
-    const urlParams = new URLSearchParams(window.location.search)
-    if (urlParams.get('app') === 'true') {
-      // Allow direct link to app with ?app=true
-      setActiveTab('home')
-    }
-    // Otherwise stay on landing page (default state)
-  }, [])
+  // DISABLED FOR DEBUGGING
+  // useEffect(() => {
+  //   // Allow forcing landing page with ?landing=true parameter (already default)
+  //   const urlParams = new URLSearchParams(window.location.search)
+  //   if (urlParams.get('app') === 'true') {
+  //     // Allow direct link to app with ?app=true
+  //     setActiveTab('home')
+  //   }
+  //   // Otherwise stay on landing page (default state)
+  // }, [])
 
   // DEBUG: Track activeTab changes
   useEffect(() => {
@@ -78,15 +79,14 @@ function App() {
     console.log('Setting activeTab to: home')
     console.log('========================================')
 
-    setActiveTab('home')
-
-    // Force a re-render check after state update
-    setTimeout(() => {
-      alert('After timeout - activeTab is now: ' + activeTab)
-    }, 100)
+    // Try functional form of setState
+    setActiveTab((prevTab) => {
+      alert('Inside setActiveTab - prevTab: ' + prevTab + ', setting to: home')
+      return 'home'
+    })
 
     console.log('========================================')
-    console.log('After setActiveTab, activeTab should be home')
+    console.log('After setActiveTab call')
     console.log('========================================')
   }
 
