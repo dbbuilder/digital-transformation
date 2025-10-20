@@ -337,8 +337,7 @@ function App() {
           </div>
         )}
 
-        <Suspense fallback={<LoadingFallback />}>
-          {activeTab === 'home' && (
+        {activeTab === 'home' && (
           <div className="space-y-6 sm:space-y-8">
             {/* MASSIVE OBVIOUS INDICATOR */}
             <div className="bg-red-600 text-white p-8 text-center font-bold text-4xl rounded-lg mb-4 border-8 border-yellow-300">
@@ -581,6 +580,7 @@ function App() {
           </div>
         )}
 
+        <Suspense fallback={<LoadingFallback />}>
           {activeTab === 'education' && <EducationHub />}
 
           {activeTab === 'settings' && <SettingsView />}
