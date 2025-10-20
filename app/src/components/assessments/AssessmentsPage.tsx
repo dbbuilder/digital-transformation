@@ -32,53 +32,49 @@ export function AssessmentsPage({ projectId }: AssessmentsPageProps) {
   // If an assessment is selected, show the interview form
   if (selectedAssessment) {
     return (
-      <div className="min-h-screen bg-neutral-50 py-8">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <EnhancedInterviewForm
-            assessment={selectedAssessment}
-            onBack={handleBack}
-            onComplete={handleComplete}
-          />
-        </div>
-      </div>
+      <EnhancedInterviewForm
+        assessment={selectedAssessment}
+        onBack={handleBack}
+        onComplete={handleComplete}
+      />
     )
   }
 
   // Otherwise show dashboard or list view
   return (
-    <div className="min-h-screen bg-neutral-50 py-8">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        {/* View Switcher Tabs */}
-        <div className="mb-6 flex gap-2">
-          <button
-            onClick={() => setViewMode('dashboard')}
-            className={`rounded-lg px-4 py-2 font-medium transition-colors ${
-              viewMode === 'dashboard'
-                ? 'bg-primary-500 text-white'
-                : 'bg-white text-neutral-700 hover:bg-neutral-100'
-            }`}
-          >
-            Dashboard
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`rounded-lg px-4 py-2 font-medium transition-colors ${
-              viewMode === 'list'
-                ? 'bg-primary-500 text-white'
-                : 'bg-white text-neutral-700 hover:bg-neutral-100'
-            }`}
-          >
-            Assessment Matrix
-          </button>
-        </div>
-
-        {/* Content */}
-        {viewMode === 'dashboard' ? (
-          <AssessmentDashboard projectId={projectId} onStartAssessment={handleStartAssessment} />
-        ) : (
-          <AssessmentList projectId={projectId} onSelectAssessment={handleStartAssessment} />
-        )}
+    <div className="space-y-6">
+      {/* View Switcher Tabs - Mobile Optimized */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setViewMode('dashboard')}
+          className={`flex-1 sm:flex-none rounded-lg px-4 py-2 font-medium transition-colors text-sm sm:text-base ${
+            viewMode === 'dashboard'
+              ? 'bg-primary-500 text-white'
+              : 'bg-white text-neutral-700 hover:bg-neutral-100'
+          }`}
+          style={{ minHeight: '44px' }}
+        >
+          Dashboard
+        </button>
+        <button
+          onClick={() => setViewMode('list')}
+          className={`flex-1 sm:flex-none rounded-lg px-4 py-2 font-medium transition-colors text-sm sm:text-base ${
+            viewMode === 'list'
+              ? 'bg-primary-500 text-white'
+              : 'bg-white text-neutral-700 hover:bg-neutral-100'
+          }`}
+          style={{ minHeight: '44px' }}
+        >
+          Matrix
+        </button>
       </div>
+
+      {/* Content */}
+      {viewMode === 'dashboard' ? (
+        <AssessmentDashboard projectId={projectId} onStartAssessment={handleStartAssessment} />
+      ) : (
+        <AssessmentList projectId={projectId} onSelectAssessment={handleStartAssessment} />
+      )}
     </div>
   )
 }

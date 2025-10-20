@@ -34,25 +34,19 @@ export function ProjectsPage({ onNavigateToAssessments }: ProjectsPageProps) {
 
   if (selectedProject) {
     return (
-      <div className="min-h-screen bg-neutral-50 py-8">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <ProjectDetail
-            project={selectedProject}
-            onBack={handleBack}
-            onEdit={handleEdit}
-            onStartAssessments={onNavigateToAssessments}
-          />
-        </div>
-      </div>
+      <ProjectDetail
+        project={selectedProject}
+        onBack={handleBack}
+        onEdit={handleEdit}
+        onStartAssessments={onNavigateToAssessments}
+      />
     )
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 py-8">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <ProjectList onSelectProject={handleSelectProject} onCreateProject={handleCreateProject} />
-      </div>
+    <>
+      <ProjectList onSelectProject={handleSelectProject} onCreateProject={handleCreateProject} />
       <CreateProjectModal />
-    </div>
+    </>
   )
 }

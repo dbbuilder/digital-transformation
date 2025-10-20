@@ -84,25 +84,27 @@ export function ProjectDetail({ project, onBack, onEdit, onStartAssessments }: P
         Back to Projects
       </button>
 
-      {/* View Switcher Tabs */}
+      {/* View Switcher Tabs - Mobile Optimized */}
       <div className="flex gap-2">
         <button
           onClick={() => setViewMode('overview')}
-          className={`rounded-lg px-4 py-2 font-medium transition-colors ${
+          className={`flex-1 sm:flex-none rounded-lg px-4 py-2 font-medium transition-colors text-sm sm:text-base ${
             viewMode === 'overview'
               ? 'bg-primary-500 text-white'
               : 'bg-white text-neutral-700 hover:bg-neutral-100'
           }`}
+          style={{ minHeight: '44px' }}
         >
           Overview
         </button>
         <button
           onClick={() => setViewMode('roadmap')}
-          className={`rounded-lg px-4 py-2 font-medium transition-colors ${
+          className={`flex-1 sm:flex-none rounded-lg px-4 py-2 font-medium transition-colors text-sm sm:text-base ${
             viewMode === 'roadmap'
               ? 'bg-primary-500 text-white'
               : 'bg-white text-neutral-700 hover:bg-neutral-100'
           }`}
+          style={{ minHeight: '44px' }}
         >
           Roadmap
         </button>
@@ -113,11 +115,11 @@ export function ProjectDetail({ project, onBack, onEdit, onStartAssessments }: P
         <RoadmapTimeline projectId={project.id} />
       ) : (
         <>
-          {/* Header */}
+          {/* Header - Mobile Optimized */}
       <div className="card">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="mb-2 flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+          <div className="flex-1 w-full">
+            <div className="mb-2 flex flex-wrap items-center gap-2">
               <span
                 className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusColor(project.status)}`}
               >
@@ -129,12 +131,12 @@ export function ProjectDetail({ project, onBack, onEdit, onStartAssessments }: P
                 {project.currentPhase.charAt(0) + project.currentPhase.slice(1).toLowerCase()}
               </span>
             </div>
-            <h2 className="text-3xl font-bold text-neutral-900">{project.name}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 break-words">{project.name}</h2>
             {project.description && (
-              <p className="mt-2 text-neutral-600">{project.description}</p>
+              <p className="mt-2 text-sm sm:text-base text-neutral-600">{project.description}</p>
             )}
           </div>
-          <button onClick={() => onEdit(project)} className="btn-secondary">
+          <button onClick={() => onEdit(project)} className="btn-secondary w-full sm:w-auto flex items-center justify-center sm:justify-start flex-shrink-0">
             <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"

@@ -8,6 +8,8 @@ import { ReferenceMaterialsPanel } from './ReferenceMaterialsPanel'
 import { DetailedQuestionPanel } from './DetailedQuestionPanel'
 import { SOWPreviewPanel } from './SOWPreviewPanel'
 import { StakeholderSelector } from './StakeholderSelector'
+import { AIResponseRefiner } from './AIResponseRefiner'
+import { GapDetector } from './GapDetector'
 import type { Assessment, InterviewQuestion, AssessmentResponse, InterviewResponse } from '../../types'
 
 interface EnhancedInterviewFormProps {
@@ -359,6 +361,23 @@ export function EnhancedInterviewForm({ assessment, onComplete, onBack }: Enhanc
             </div>
           )}
 
+          {/* AI Response Refiner */}
+          {currentResponse?.answer && assessment.projectId && (
+            <AIResponseRefiner
+              questionId={currentQuestion.id}
+              questionText={currentQuestion.question}
+              currentAnswer={(currentResponse.answer as string) || ''}
+              tier={assessment.tier}
+              context={Array.from(responses.values()).filter(r => r.questionId !== currentQuestion.id)}
+              onAccept={(refinedAnswer) => {
+                saveResponse(currentQuestion, refinedAnswer, currentResponse?.notes)
+              }}
+              onReject={() => {
+                // User rejected the AI suggestion, do nothing
+              }}
+            />
+          )}
+
           <div>
             <label className="block text-sm font-medium text-neutral-700 mb-1">
               Notes / Evidence / Follow-up
@@ -524,6 +543,21 @@ export function EnhancedInterviewForm({ assessment, onComplete, onBack }: Enhanc
           )}
         </div>
       </div>
+
+      {/* Gap Detection - AI Analysis */}
+      {assessment.projectId && responses.size > 0 && (
+        <GapDetector
+          projectId={assessment.projectId}
+          responses={Array.from(responses.values())}
+          onQuestionClick={(questionId) => {
+            const index = questions.findIndex(q => q.id === questionId)
+            if (index !== -1) {
+              setCurrentQuestionIndex(index)
+              setResponseQuality(null)
+            }
+          }}
+        />
+      )}
 
       {/* Navigation */}
       <div className="flex items-center justify-between">

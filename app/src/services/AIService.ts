@@ -372,6 +372,209 @@ highlight risks, and identify opportunities. Be specific and reference actual re
 
     return summary.join('\n')
   }
+
+  /**
+   * Refine a vague or incomplete response
+   * Expands brief answers into detailed, professional responses
+   */
+  async refineResponse(
+    question: string,
+    userResponse: string,
+    tier: Tier,
+    context?: AssessmentResponse[]
+  ): Promise<string> {
+    if (!this.isAvailable()) {
+      throw new Error('AI service not available - configure API key in settings')
+    }
+
+    const contextSummary = context
+      ? `\n\nRelated context from other responses:\n${context
+          .slice(0, 5)
+          .map(r => `Q: ${r.questionText}\nA: ${r.answer}`)
+          .join('\n\n')}`
+      : ''
+
+    const prompt = `You are a digital transformation consultant helping improve assessment responses.
+
+Question (${tier} tier): ${question}
+
+User's brief response: "${userResponse}"${contextSummary}
+
+Task: Expand and refine this response to be more detailed, specific, and professional. Include:
+- Specific technical details or metrics where applicable
+- Clear implications or challenges
+- Maintain the user's original meaning and facts
+- Keep it concise (2-3 sentences max)
+
+Refined response:`
+
+    const completion = await this.openai!.chat.completions.create({
+      model: this.config.model,
+      messages: [
+        {
+          role: 'system',
+          content: 'You are an expert digital transformation consultant. Refine vague responses into clear, professional statements with specific details.',
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      temperature: 0.7,
+      max_tokens: 300,
+    })
+
+    return completion.choices[0]?.message?.content?.trim() || userResponse
+  }
+
+  /**
+   * Generate contextual follow-up questions based on incomplete or vague responses
+   */
+  async generateFollowUpQuestions(
+    question: string,
+    response: string,
+    tier: Tier
+  ): Promise<string[]> {
+    if (!this.isAvailable()) {
+      throw new Error('AI service not available - configure API key in settings')
+    }
+
+    const prompt = `You are a digital transformation consultant conducting an assessment interview.
+
+Question (${tier} tier): ${question}
+Client's response: "${response}"
+
+Task: Identify what information is missing or vague in this response. Generate 2-3 specific, clarifying follow-up questions that would help complete the picture.
+
+Focus on:
+- Technical specifics (versions, technologies, volumes)
+- Quantitative metrics (percentages, timelines, costs)
+- Organizational context (team size, ownership, processes)
+- Challenges and pain points
+
+Return ONLY a JSON array of questions, no additional text.
+
+Example format: ["What specific cloud provider are you using?", "How many users access the system daily?"]`
+
+    const completion = await this.openai!.chat.completions.create({
+      model: this.config.model,
+      messages: [
+        {
+          role: 'system',
+          content: 'You are an expert consultant skilled at asking probing questions to uncover critical details.',
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      temperature: 0.7,
+      max_tokens: 200,
+      response_format: { type: 'json_object' },
+    })
+
+    try {
+      const result = JSON.parse(completion.choices[0]?.message?.content || '{"questions":[]}')
+      return result.questions || result || []
+    } catch {
+      return []
+    }
+  }
+
+  /**
+   * Detect gaps in assessment coverage
+   * Identifies critical missing information across all tiers
+   */
+  async detectGaps(
+    responses: AssessmentResponse[],
+    allQuestions: { id: string; question: string; tier: Tier; priority: string }[]
+  ): Promise<{
+    criticalGaps: string[]
+    missingAreas: string[]
+    coverageByTier: Record<Tier, number>
+    recommendations: string[]
+  }> {
+    if (!this.isAvailable()) {
+      throw new Error('AI service not available - configure API key in settings')
+    }
+
+    const answered = new Set(responses.map(r => r.questionId))
+    const unanswered = allQuestions.filter(q => !answered.has(q.id))
+    const unansweredHigh = unanswered.filter(q => q.priority === 'HIGH')
+
+    const coverageByTier: Record<Tier, number> = {
+      UI: 0,
+      API: 0,
+      DATA: 0,
+      CLOUD: 0,
+      AI: 0,
+    }
+
+    for (const tier of Object.keys(coverageByTier) as Tier[]) {
+      const tierQuestions = allQuestions.filter(q => q.tier === tier)
+      const tierAnswered = responses.filter(r => {
+        const q = allQuestions.find(qu => qu.id === r.questionId)
+        return q?.tier === tier
+      })
+      coverageByTier[tier] = tierQuestions.length > 0 ? (tierAnswered.length / tierQuestions.length) * 100 : 0
+    }
+
+    const prompt = `You are analyzing assessment coverage for a digital transformation project.
+
+Assessment Status:
+- Total questions: ${allQuestions.length}
+- Answered: ${responses.length}
+- Completion: ${Math.round((responses.length / allQuestions.length) * 100)}%
+
+Coverage by tier:
+${Object.entries(coverageByTier)
+  .map(([tier, pct]) => `- ${tier}: ${Math.round(pct)}%`)
+  .join('\n')}
+
+High-priority unanswered questions (${unansweredHigh.length}):
+${unansweredHigh.slice(0, 10).map(q => `- ${q.tier}: ${q.question}`).join('\n')}
+
+Task: Analyze gaps and provide:
+1. criticalGaps: Array of 2-3 most critical missing areas (e.g., "No data governance framework defined")
+2. missingAreas: Array of 3-5 general missing topics (e.g., "Cloud cost management", "API security")
+3. recommendations: Array of 3-5 specific next steps to improve coverage
+
+Return JSON format with these three array fields.`
+
+    const completion = await this.openai!.chat.completions.create({
+      model: this.config.model,
+      messages: [
+        {
+          role: 'system',
+          content: 'You are an expert at identifying critical gaps in digital transformation assessments.',
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      temperature: 0.7,
+      max_tokens: 500,
+      response_format: { type: 'json_object' },
+    })
+
+    try {
+      const result = JSON.parse(completion.choices[0]?.message?.content || '{}')
+      return {
+        criticalGaps: result.criticalGaps || [],
+        missingAreas: result.missingAreas || [],
+        coverageByTier,
+        recommendations: result.recommendations || [],
+      }
+    } catch {
+      return {
+        criticalGaps: [],
+        missingAreas: [],
+        coverageByTier,
+        recommendations: [],
+      }
+    }
+  }
 }
 
 /**

@@ -4,12 +4,14 @@ import './index.css'
 import App from './App.tsx'
 import { initializeDatabase } from './lib/database'
 import { seedInterviewQuestions } from './lib/csvImporter'
+import { getOrCreateSampleProject } from './services/SampleDataService'
 
 // Initialize database and seed data on app startup
 async function initializeApp() {
   try {
     await initializeDatabase()
     await seedInterviewQuestions()
+    await getOrCreateSampleProject()
     console.log('✅ App initialization complete')
   } catch (error) {
     console.error('❌ App initialization failed:', error)

@@ -1,18 +1,33 @@
-import { useState, useEffect } from 'react'
-import { AssessmentsPage } from './components/assessments/AssessmentsPage'
-import { ProjectsPage } from './components/projects/ProjectsPage'
-import { EducationHub } from './components/education/EducationHub'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { WelcomeModal, useWelcomeModal } from './components/onboarding/WelcomeModal'
-import { CreateProjectModal } from './components/projects/CreateProjectModal'
-import { DevTools } from './components/admin/DevTools'
 import { LandingPage } from './components/landing/LandingPage'
-import { PathRecommendationView } from './components/decision/PathRecommendation'
-import { AISettings } from './components/settings/AISettings'
 import { useAppStore } from './stores/useAppStore'
 import { db } from './lib/database'
 
+// Lazy load heavy components for better initial load performance
+const AssessmentsPage = lazy(() => import('./components/assessments/AssessmentsPage').then(m => ({ default: m.AssessmentsPage })))
+const ProjectsPage = lazy(() => import('./components/projects/ProjectsPage').then(m => ({ default: m.ProjectsPage })))
+const EducationHub = lazy(() => import('./components/education/EducationHub').then(m => ({ default: m.EducationHub })))
+const CreateProjectModal = lazy(() => import('./components/projects/CreateProjectModal').then(m => ({ default: m.CreateProjectModal })))
+const DevTools = lazy(() => import('./components/admin/DevTools').then(m => ({ default: m.DevTools })))
+const PathRecommendationView = lazy(() => import('./components/decision/PathRecommendation').then(m => ({ default: m.PathRecommendationView })))
+const SettingsView = lazy(() => import('./components/settings/SettingsView').then(m => ({ default: m.SettingsView })))
+const DeliverablesView = lazy(() => import('./components/deliverables/DeliverablesView').then(m => ({ default: m.DeliverablesView })))
+
+// Loading fallback component
+function LoadingFallback() {
+  return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mb-4"></div>
+        <p className="text-neutral-600">Loading...</p>
+      </div>
+    </div>
+  )
+}
+
 function App() {
-  const [activeTab, setActiveTab] = useState<'landing' | 'home' | 'projects' | 'about' | 'assessments' | 'decision' | 'education' | 'settings'>('landing')
+  const [activeTab, setActiveTab] = useState<'landing' | 'home' | 'projects' | 'about' | 'assessments' | 'decision' | 'deliverables' | 'education' | 'settings'>('landing')
   const [sampleProjectId, setSampleProjectId] = useState<number | null>(null)
   const [assessmentProjectId, setAssessmentProjectId] = useState<number | null>(null)
   const { showWelcome, handleComplete } = useWelcomeModal()
@@ -126,6 +141,16 @@ function App() {
                 Decision
               </button>
               <button
+                onClick={() => setActiveTab('deliverables')}
+                className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors text-sm lg:text-base ${
+                  activeTab === 'deliverables'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-neutral-600 hover:bg-neutral-100'
+                }`}
+              >
+                Deliverables
+              </button>
+              <button
                 onClick={() => setActiveTab('education')}
                 className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors text-sm lg:text-base ${
                   activeTab === 'education'
@@ -232,6 +257,19 @@ function App() {
               </button>
               <button
                 onClick={() => {
+                  setActiveTab('deliverables')
+                  setMobileMenuOpen(false)
+                }}
+                className={`w-full text-left px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === 'deliverables'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-neutral-600 hover:bg-neutral-100'
+                }`}
+              >
+                Deliverables
+              </button>
+              <button
+                onClick={() => {
                   setActiveTab('education')
                   setMobileMenuOpen(false)
                 }}
@@ -276,7 +314,8 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {activeTab === 'home' && (
+        <Suspense fallback={<LoadingFallback />}>
+          {activeTab === 'home' && (
           <div className="space-y-8">
             {/* Hero Section - Mobile Optimized */}
             <div className="text-center space-y-4 sm:space-y-6">
@@ -493,9 +532,20 @@ function App() {
           </div>
         )}
 
-        {activeTab === 'education' && <EducationHub />}
+        {activeTab === 'deliverables' && sampleProjectId && (
+          <DeliverablesView projectId={sampleProjectId} />
+        )}
 
-        {activeTab === 'settings' && <AISettings />}
+        {activeTab === 'deliverables' && !sampleProjectId && (
+          <div className="text-center py-12">
+            <div className="text-neutral-500">Loading project...</div>
+          </div>
+        )}
+
+          {activeTab === 'education' && <EducationHub />}
+
+          {activeTab === 'settings' && <SettingsView />}
+        </Suspense>
       </main>
 
       {/* Footer */}
@@ -511,7 +561,9 @@ function App() {
       {showWelcome && <WelcomeModal onComplete={handleComplete} />}
 
       {/* Create Project Modal */}
-      <CreateProjectModal />
+      <Suspense fallback={null}>
+        <CreateProjectModal />
+      </Suspense>
     </div>
   )
 }

@@ -76,13 +76,13 @@ export function ProjectList({ onSelectProject, onCreateProject }: ProjectListPro
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-neutral-900">Projects</h2>
-          <p className="text-neutral-600">Manage your digital transformation engagements</p>
+      {/* Header - Mobile Optimized */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex-1">
+          <h2 className="text-xl sm:text-2xl font-bold text-neutral-900">Projects</h2>
+          <p className="text-sm sm:text-base text-neutral-600">Manage your digital transformation engagements</p>
         </div>
-        <button onClick={onCreateProject} className="btn-primary">
+        <button onClick={onCreateProject} className="btn-primary w-full sm:w-auto flex items-center justify-center">
           <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
