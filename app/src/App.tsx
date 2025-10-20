@@ -65,6 +65,7 @@ function App() {
 
   // Handle Get Started from landing page
   function handleGetStarted() {
+    alert('handleGetStarted called! Current tab: ' + activeTab)
     console.log('========================================')
     console.log('HANDLE GET STARTED CALLED')
     console.log('Current activeTab:', activeTab)
@@ -73,14 +74,11 @@ function App() {
 
     setActiveTab('home')
 
-    console.log('========================================')
-    console.log('After setActiveTab, scheduling modal open')
-    console.log('========================================')
+    alert('After setActiveTab - should be home now')
 
-    // Don't open modal automatically - let user see the home page first
-    // setTimeout(() => {
-    //   setCreateProjectModalOpen(true)
-    // }, 500)
+    console.log('========================================')
+    console.log('After setActiveTab, activeTab should be home')
+    console.log('========================================')
   }
 
   // Show landing page if on landing tab
